@@ -1,0 +1,7 @@
+{
+  "name": "AKIRA Botanical Laboratory",
+  "description": "Handcrafted small-batch botanical skincare, restorative bodycare, and artisanal eco-cleaning with direct UPI ordering and WhatsApp integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
