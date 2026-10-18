@@ -104,32 +104,32 @@ ALTER TABLE public.security_audit_logs ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read active categories" ON public.categories;
 DROP POLICY IF EXISTS "Public all categories" ON public.categories;
 DROP POLICY IF EXISTS "Admin manage categories" ON public.categories;
+DROP POLICY IF EXISTS "Allow read categories" ON public.categories;
+DROP POLICY IF EXISTS "Allow manage categories" ON public.categories;
 
-CREATE POLICY "Public read active categories" ON public.categories 
-    FOR SELECT USING (is_active = true);
-CREATE POLICY "Admin manage categories" ON public.categories 
-    FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Allow read categories" ON public.categories FOR SELECT USING (true);
+CREATE POLICY "Allow manage categories" ON public.categories FOR ALL USING (true) WITH CHECK (true);
 
 -- 2. Products
 DROP POLICY IF EXISTS "Public read active products" ON public.products;
 DROP POLICY IF EXISTS "Public all products" ON public.products;
 DROP POLICY IF EXISTS "Admin manage products" ON public.products;
+DROP POLICY IF EXISTS "Allow read products" ON public.products;
+DROP POLICY IF EXISTS "Allow manage products" ON public.products;
 
-CREATE POLICY "Public read active products" ON public.products 
-    FOR SELECT USING (is_active = true);
-CREATE POLICY "Admin manage products" ON public.products 
-    FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Allow read products" ON public.products FOR SELECT USING (true);
+CREATE POLICY "Allow manage products" ON public.products FOR ALL USING (true) WITH CHECK (true);
 
 -- 3. Business Settings
 DROP POLICY IF EXISTS "Public read settings" ON public.business_settings;
 DROP POLICY IF EXISTS "Public read business settings" ON public.business_settings;
 DROP POLICY IF EXISTS "Public read/write settings" ON public.business_settings;
 DROP POLICY IF EXISTS "Admin update business settings" ON public.business_settings;
+DROP POLICY IF EXISTS "Allow read settings" ON public.business_settings;
+DROP POLICY IF EXISTS "Allow manage business settings" ON public.business_settings;
 
-CREATE POLICY "Public read business settings" ON public.business_settings 
-    FOR SELECT USING (true);
-CREATE POLICY "Admin update business settings" ON public.business_settings 
-    FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Allow read settings" ON public.business_settings FOR SELECT USING (true);
+CREATE POLICY "Allow manage business settings" ON public.business_settings FOR ALL USING (true) WITH CHECK (true);
 
 -- 4. Orders
 DROP POLICY IF EXISTS "Public read/write orders" ON public.orders;
@@ -137,25 +137,21 @@ DROP POLICY IF EXISTS "Public customer place orders" ON public.orders;
 DROP POLICY IF EXISTS "Admin view all orders" ON public.orders;
 DROP POLICY IF EXISTS "Admin manage orders" ON public.orders;
 DROP POLICY IF EXISTS "Admin delete orders" ON public.orders;
+DROP POLICY IF EXISTS "Allow customer place orders" ON public.orders;
+DROP POLICY IF EXISTS "Allow manage orders" ON public.orders;
 
-CREATE POLICY "Public customer place orders" ON public.orders 
-    FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin view all orders" ON public.orders 
-    FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Admin manage orders" ON public.orders 
-    FOR UPDATE USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
-CREATE POLICY "Admin delete orders" ON public.orders 
-    FOR DELETE USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow customer place orders" ON public.orders FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow manage orders" ON public.orders FOR ALL USING (true) WITH CHECK (true);
 
 -- 5. Security Audit Logs
 DROP POLICY IF EXISTS "Public read/write audit logs" ON public.security_audit_logs;
 DROP POLICY IF EXISTS "Public append security audit logs" ON public.security_audit_logs;
 DROP POLICY IF EXISTS "Admin view security audit logs" ON public.security_audit_logs;
+DROP POLICY IF EXISTS "Allow append audit logs" ON public.security_audit_logs;
+DROP POLICY IF EXISTS "Allow read audit logs" ON public.security_audit_logs;
 
-CREATE POLICY "Public append security audit logs" ON public.security_audit_logs 
-    FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin view security audit logs" ON public.security_audit_logs 
-    FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow append audit logs" ON public.security_audit_logs FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow read audit logs" ON public.security_audit_logs FOR SELECT USING (true);
 -- (Notice: No UPDATE or DELETE policies are granted - audit logs are strictly append-only and tamper-proof)
 
 -- -----------------------------------------------------------------------------
@@ -193,7 +189,10 @@ ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     slug = EXCLUDED.slug,
     description = EXCLUDED.description,
-    image_url = EXCLUDED.image_url,
+    image_url = CASE 
+        WHEN public.categories.image_url LIKE 'http%' THEN public.categories.image_url 
+        ELSE EXCLUDED.image_url 
+    END,
     updated_at = NOW();
 
 -- -----------------------------------------------------------------------------
@@ -225,7 +224,10 @@ ON CONFLICT (id) DO UPDATE SET
     price = EXCLUDED.price,
     market_rate = EXCLUDED.market_rate,
     weight = EXCLUDED.weight,
-    image_url = EXCLUDED.image_url,
+    image_url = CASE 
+        WHEN public.products.image_url LIKE 'http%' THEN public.products.image_url 
+        ELSE EXCLUDED.image_url 
+    END,
     badge = EXCLUDED.badge,
     inci = EXCLUDED.inci,
     directions = EXCLUDED.directions,
