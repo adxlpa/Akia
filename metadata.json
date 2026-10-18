@@ -1,7 +1,6 @@
 {
-  "name": "AKIRA Botanical Laboratory",
-  "description": "Handcrafted small-batch botanical skincare, restorative bodycare, and artisanal eco-cleaning with direct UPI ordering and WhatsApp integration.",
+  "name": "AKIA Hand Made & Herbal Care",
+  "description": "AKIA Premium Hand Made Soaps, herbal face wash, hair oils, gels, and beauty creams with direct UPI and WhatsApp integration.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
-

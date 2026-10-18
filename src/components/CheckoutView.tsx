@@ -46,7 +46,9 @@ export const CheckoutView: React.FC = () => {
     settings,
     createOrder,
     setActiveView,
+    setActiveOrderForPayment,
   } = useStore();
+
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -115,7 +117,7 @@ export const CheckoutView: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      createOrder({
+      const newOrder = createOrder({
         customerName: formData.fullName.trim(),
         phone: formData.mobileNumber.trim(),
         email: formData.email.trim(),
@@ -126,13 +128,19 @@ export const CheckoutView: React.FC = () => {
         pincode: formData.pincode.trim(),
         deliveryInstructions: formData.deliveryInstructions.trim() || undefined,
       });
-      // createOrder handles routing to 'payment' view automatically
+
+      if (newOrder) {
+        setActiveOrderForPayment(newOrder);
+        setActiveView('payment');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } catch (err: any) {
       alert(err.message || 'Error creating order');
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   const totalPayable = cartSubtotal + calculatedDeliveryCharge;
 

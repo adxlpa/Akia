@@ -96,3 +96,27 @@ export interface BusinessSettings {
   deliveryCharge: number;
   freeShippingThreshold: number;
 }
+
+export interface AdminSession {
+  token: string;
+  expiresAt: number;
+  username: string;
+  signature?: string;
+}
+
+
+export interface SecurityAuditLog {
+  id: string;
+  timestamp: string;
+  event: 'LOGIN_SUCCESS' | 'LOGIN_FAILED' | 'LOCKOUT' | 'LOGOUT' | 'PASSWORD_CHANGED';
+  username: string;
+  ipOrDevice?: string;
+  details: string;
+}
+
+export interface AdminCredentials {
+  username: string;
+  passwordHash: string;
+  salt: string;
+  lastChanged: string;
+}

@@ -13,7 +13,7 @@ export const OrderConfirmationView: React.FC = () => {
         </span>
         <h2 className="text-2xl font-medium text-black mb-2">Order Confirmed</h2>
         <p className="text-sm text-[#5e5e5e] mb-6">
-          Thank you for choosing AKIRA Botanical Laboratory.
+          Thank you for choosing AKIA Premium Hand Made.
         </p>
         <button
           type="button"
@@ -28,37 +28,44 @@ export const OrderConfirmationView: React.FC = () => {
 
   const order = activeOrderForPayment;
 
-  // Format WhatsApp Message exactly as specified in PDF Section 9
+  // Format Items List
   const itemsText = order.items
-    .map((item) => `${item.productName} × ${item.quantity} — ₹${item.totalPrice}`)
+    .map(
+      (item, idx) =>
+        `${idx + 1}. ${item.productName} (${item.variantName}) × ${item.quantity} — ₹${item.totalPrice}`
+    )
     .join('\n');
 
-  const paymentStatusDisplay =
-    order.paymentStatus === 'submitted'
-      ? 'Payment Submitted (Screenshot Uploaded)'
-      : order.paymentStatus === 'verified'
-      ? 'Payment Verified'
-      : 'Payment Pending';
+  // Complete Order Data Formatted for 1-Click WhatsApp Submission
+  const rawWhatsAppMessage = `*AKIA ORDER & PAYMENT CONFIRMATION*
+━━━━━━━━━━━━━━━━━━━━
+*Order Number:* ${order.orderNumber}
+*Date:* ${new Date(order.createdAt).toLocaleString('en-IN', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  })}
 
-  const rawWhatsAppMessage = `*NEW ORDER*
-
-*Order:* ${order.orderNumber}
-*Customer:* ${order.customerName}
-*Phone:* ${order.phone}
-
-*Address:*
-${order.address},
-${order.city}, ${order.state}
-*PIN:* ${order.pincode}
-${order.deliveryInstructions ? `*Instructions:* ${order.deliveryInstructions}\n` : ''}
-*Items:*
+*CUSTOMER DETAILS:*
+• *Name:* ${order.customerName}
+• *Phone:* +91 ${order.phone}
+${order.email ? `• *Email:* ${order.email}\n` : ''}
+*DELIVERY ADDRESS:*
+${order.address}
+${order.city}, ${order.district}, ${order.state}
+*PIN Code:* ${order.pincode}
+${order.deliveryInstructions ? `*Delivery Notes:* ${order.deliveryInstructions}\n` : ''}
+*ORDERED ITEMS:*
 ${itemsText}
 
+━━━━━━━━━━━━━━━━━━━━
 *Subtotal:* ₹${order.subtotal}
-*Delivery:* ${order.deliveryCharge === 0 ? 'FREE' : `₹${order.deliveryCharge}`}
-*TOTAL:* ₹${order.totalAmount}
+*Delivery Charge:* ${order.deliveryCharge === 0 ? 'FREE' : `₹${order.deliveryCharge}`}
+*TOTAL AMOUNT PAID:* ₹${order.totalAmount}
+*Payment Method:* UPI
+*Payment Status:* Paid / Submitted
 
-*Payment Status:* ${paymentStatusDisplay}`;
+📸 *PAYMENT SCREENSHOT:* (Attaching screenshot with this message)
+Please verify payment and confirm dispatch!`;
 
   const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
     rawWhatsAppMessage
@@ -72,76 +79,42 @@ ${itemsText}
 
   return (
     <div className="w-full bg-[#f9f9f9] min-h-screen pt-28 pb-20">
-      <div className="max-w-[860px] mx-auto px-5 lg:px-8">
-        {/* Banner */}
+      <div className="max-w-[880px] mx-auto px-5 lg:px-8">
+        {/* Banner: Order Confirmed & Order Number */}
         <div className="bg-white border border-[#E5E5E5] p-8 sm:p-10 mb-8 shadow-xs text-center">
-          <div className="w-14 h-14 bg-emerald-50 text-emerald-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-200">
-            <span className="material-symbols-outlined text-[32px]">check</span>
+          <div className="w-16 h-16 bg-emerald-50 text-emerald-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-200">
+            <span className="material-symbols-outlined text-[36px]">check</span>
           </div>
 
           <span className="text-xs uppercase font-mono tracking-widest text-[#5e5e5e] block mb-1">
-            Dispatch Registry Ref: {order.orderNumber}
+            Order Confirmation
           </span>
-          <h1 className="text-3xl sm:text-4xl text-black font-normal tracking-tight mb-2">
-            Order Placed Successfully
+          <h1 className="text-3xl sm:text-4xl text-black font-semibold tracking-tight mb-2 font-mono">
+            Order {order.orderNumber} Confirmed
           </h1>
           <p className="text-sm text-[#5e5e5e] max-w-lg mx-auto leading-relaxed">
-            Thank you for supporting small-batch craftsmanship. We've received your consignment request and payment submission.
+            Thank you for supporting small-batch herbal craftsmanship. Your order request has been registered.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono text-xs">
-            <span className="px-3 py-1 bg-[#F5F4F2] border border-[#E5E5E5] text-black">
-              Payment Status: <strong>{order.paymentStatus.toUpperCase()}</strong>
+            <span className="px-3.5 py-1.5 bg-[#F5F4F2] border border-[#E5E5E5] text-black">
+              Order Ref: <strong className="text-[#8B261D]">{order.orderNumber}</strong>
             </span>
-            <span className="px-3 py-1 bg-[#F5F4F2] border border-[#E5E5E5] text-black">
-              Order Status: <strong>{order.orderStatus.toUpperCase()}</strong>
+            <span className="px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-800">
+              Total Paid: <strong>₹{order.totalAmount.toLocaleString('en-IN')}</strong>
+            </span>
+            <span className="px-3.5 py-1.5 bg-[#F5F4F2] border border-[#E5E5E5] text-black">
+              Status: <strong>READY FOR DISPATCH</strong>
             </span>
           </div>
         </div>
 
-        {/* WhatsApp Communication Strip (Core Requirement Section 9) */}
-        <div className="bg-[#075E54] text-white p-6 sm:p-8 border border-emerald-900 mb-8 shadow-sm">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xs uppercase font-mono tracking-widest text-emerald-200 font-semibold">
-                  Official Communication Channel
-                </span>
-              </div>
-              <h2 className="text-xl font-medium tracking-tight">
-                Send Order Details via WhatsApp
-              </h2>
-              <p className="text-xs text-emerald-100 max-w-md leading-relaxed">
-                Connect directly with our atelier team on WhatsApp to confirm your batch allocation and track dispatch updates.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-11 px-5 bg-white text-[#075E54] text-xs uppercase tracking-widest font-semibold hover:bg-neutral-100 transition-colors flex items-center justify-center gap-2 whitespace-nowrap shadow-xs"
-              >
-                <span className="material-symbols-outlined text-[18px]">chat</span>
-                <span>Send via WhatsApp</span>
-              </a>
-              <button
-                type="button"
-                onClick={handleCopyMessage}
-                className="h-11 px-4 bg-[#128C7E] text-white text-xs uppercase tracking-widest font-mono hover:bg-[#0e7468] transition-colors flex items-center justify-center gap-1.5"
-              >
-                {copiedMessage ? '✓ Copied' : 'Copy Message'}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Summary Card */}
-        <div className="bg-white border border-[#E5E5E5] p-6 sm:p-8 space-y-6">
+        {/* Complete Order Manifest & Customer Address */}
+        <div className="bg-white border border-[#E5E5E5] p-6 sm:p-8 space-y-6 mb-8 shadow-xs">
           <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4">
-            <h3 className="text-xs font-mono font-semibold uppercase text-black">
-              Consignment Receipt Snapshot
+            <h3 className="text-xs font-mono font-semibold uppercase text-black flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px]">receipt_long</span>
+              <span>Consignment Manifest & Delivery Address</span>
             </h3>
             <span className="text-xs text-[#5e5e5e] font-mono">
               {new Date(order.createdAt).toLocaleDateString('en-IN', {
@@ -153,49 +126,58 @@ ${itemsText}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs leading-relaxed">
-            <div>
-              <p className="font-semibold text-black uppercase font-mono text-[11px] mb-1">
-                Recipient & Destination:
+            {/* Customer & Address Details */}
+            <div className="p-4 bg-[#fafafa] border border-[#E5E5E5] space-y-1.5">
+              <p className="font-semibold text-black uppercase font-mono text-[11px] mb-2 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">local_shipping</span>
+                <span>Delivery Address:</span>
               </p>
-              <p className="font-medium text-black">{order.customerName}</p>
-              <p className="text-[#5e5e5e]">{order.address}</p>
-              <p className="text-[#5e5e5e]">
-                {order.city}, {order.district}, {order.state} — {order.pincode}
+              <p className="font-bold text-black text-sm">{order.customerName}</p>
+              <p className="text-[#333]">{order.address}</p>
+              <p className="text-[#333]">
+                {order.city}, {order.district}, {order.state}
               </p>
-              <p className="text-[#5e5e5e] mt-1 font-mono">Phone: +91 {order.phone}</p>
+              <p className="text-black font-mono font-semibold">PIN Code: {order.pincode}</p>
+              <p className="text-[#333] pt-1 font-mono">
+                Phone: <strong className="text-black">+91 {order.phone}</strong>
+              </p>
               {order.email && <p className="text-[#5e5e5e] font-mono">Email: {order.email}</p>}
+              {order.deliveryInstructions && (
+                <p className="text-[#5e5e5e] text-[11px] italic pt-1">
+                  Notes: {order.deliveryInstructions}
+                </p>
+              )}
             </div>
 
-            <div>
-              <p className="font-semibold text-black uppercase font-mono text-[11px] mb-1">
-                Remittance & Verification:
+            {/* Merchant Payment Details */}
+            <div className="p-4 bg-[#fafafa] border border-[#E5E5E5] space-y-1.5">
+              <p className="font-semibold text-black uppercase font-mono text-[11px] mb-2 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">account_balance_wallet</span>
+                <span>Remittance Details:</span>
               </p>
-              <p className="text-[#5e5e5e]">
-                Merchant: <span className="text-black font-medium">{settings.upiMerchantName}</span>
+              <p className="text-[#333]">
+                Merchant: <strong className="text-black">{settings.upiMerchantName}</strong>
               </p>
-              <p className="text-[#5e5e5e] font-mono">UPI ID: {settings.upiId}</p>
-              <p className="text-[#5e5e5e] mt-1">
-                Screenshot Status:{' '}
-                {order.paymentScreenshotUrl ? (
-                  <span className="text-emerald-700 font-semibold">Attached & Stored</span>
-                ) : (
-                  <span className="text-amber-700">Pending upload</span>
-                )}
+              <p className="text-[#333] font-mono">UPI ID: {settings.upiId}</p>
+              <p className="text-[#333] font-mono">Payment Mode: Direct UPI</p>
+              <p className="text-emerald-800 font-mono font-semibold pt-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px] text-emerald-600">check_circle</span>
+                <span>Payment Completed</span>
               </p>
             </div>
           </div>
 
-          {/* Ordered Line Items */}
+          {/* Ordered Line Items Table */}
           <div className="border-t border-[#E5E5E5] pt-4">
             <p className="font-semibold text-black uppercase font-mono text-[11px] mb-3">
-              Allocated Batch Items:
+              Allocated Herbal Formulations:
             </p>
-            <div className="space-y-2 font-mono text-xs">
+            <div className="space-y-2.5 font-mono text-xs">
               {order.items.map((it) => (
-                <div key={it.id} className="flex justify-between py-1 border-b border-[#f3f3f3]">
+                <div key={it.id} className="flex justify-between py-1.5 border-b border-[#f3f3f3]">
                   <span>
-                    {it.productName} <span className="text-[#5e5e5e]">({it.variantName})</span> ×{' '}
-                    {it.quantity}
+                    <strong className="text-black">{it.productName}</strong>{' '}
+                    <span className="text-[#5e5e5e]">({it.variantName})</span> × {it.quantity}
                   </span>
                   <span className="font-semibold text-black">
                     ₹{it.totalPrice.toLocaleString('en-IN')}
@@ -204,29 +186,81 @@ ${itemsText}
               ))}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#E5E5E5] space-y-1.5 font-mono text-xs">
+            <div className="mt-4 pt-3 border-t border-[#E5E5E5] space-y-2 font-mono text-xs">
               <div className="flex justify-between text-[#5e5e5e]">
-                <span>Subtotal</span>
+                <span>Items Subtotal</span>
                 <span>₹{order.subtotal.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between text-[#5e5e5e]">
                 <span>Delivery Charge</span>
                 <span>{order.deliveryCharge === 0 ? 'FREE' : `₹${order.deliveryCharge}`}</span>
               </div>
-              <div className="flex justify-between text-base font-semibold text-black pt-2 border-t border-[#E5E5E5]">
-                <span>Total Amount</span>
-                <span>₹{order.totalAmount.toLocaleString('en-IN')}</span>
+              <div className="flex justify-between text-base font-bold text-black pt-2 border-t border-[#E5E5E5]">
+                <span>Total Amount Paid</span>
+                <span className="text-[#8B261D]">₹{order.totalAmount.toLocaleString('en-IN')}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* ========================================================================= */}
+        {/* FINAL CALL-TO-ACTION: SINGLE CLICK WHATSAPP SUBMISSION */}
+        {/* ========================================================================= */}
+        <div className="bg-emerald-50 border-2 border-[#25D366] p-6 sm:p-8 text-center space-y-4 shadow-sm mb-8">
+          <div className="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center mx-auto shadow-xs">
+            <svg className="w-7 h-7 fill-current" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
+            </svg>
+          </div>
+
+          <div>
+            <span className="text-[11px] font-mono uppercase tracking-widest text-emerald-800 font-bold block mb-1">
+              Final Step • 1-Click WhatsApp Submission
+            </span>
+            <h2 className="text-xl sm:text-2xl font-bold text-black font-mono">
+              Send Name, Address & Order to WhatsApp
+            </h2>
+            <p className="text-xs text-[#5e5e5e] max-w-lg mx-auto mt-1 font-sans leading-relaxed">
+              Click the green button below to immediately open WhatsApp with your <strong>Order Number ({order.orderNumber})</strong>, <strong>Customer Name</strong>, <strong>Full Delivery Address</strong>, and items pre-filled, and attach your payment screenshot!
+            </p>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            {/* The 1-Click WhatsApp Button */}
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-8 h-14 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-mono uppercase tracking-widest font-bold flex items-center justify-center gap-2.5 shadow-md transition-all hover:scale-[1.01] active:scale-[0.99]"
+            >
+              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
+              </svg>
+              <span>Send All Data & Screenshot on WhatsApp</span>
+            </a>
+
+            {/* Copy Message Alternative */}
+            <button
+              type="button"
+              onClick={handleCopyMessage}
+              className="w-full sm:w-auto px-5 h-14 bg-white border border-emerald-300 hover:border-black text-black text-xs font-mono uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-[16px]">content_copy</span>
+              <span>{copiedMessage ? '✓ Copied All Data' : 'Copy All Text'}</span>
+            </button>
+          </div>
+
+          <p className="text-[11px] font-mono text-[#5e5e5e] pt-1">
+            Receiving Line: <strong>+{settings.whatsappNumber}</strong> (AKIA Botanical Atelier)
+          </p>
+        </div>
+
+        {/* Secondary Return Actions */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#E5E5E5]">
           <button
             type="button"
             onClick={() => setActiveView('catalogue')}
-            className="w-full sm:w-auto h-11 px-8 border border-black text-black hover:bg-black hover:text-white transition-colors text-xs uppercase tracking-widest font-semibold"
+            className="w-full sm:w-auto h-11 px-8 border border-black text-black hover:bg-black hover:text-white transition-colors text-xs uppercase tracking-widest font-semibold font-mono"
           >
             ← Return to Formulations
           </button>

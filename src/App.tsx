@@ -22,9 +22,10 @@ import { OrderConfirmationView } from './components/OrderConfirmationView';
 import { OrderTrackerView } from './components/OrderTrackerView';
 import { SearchModal } from './components/SearchModal';
 import { AdminDashboard } from './components/AdminDashboard';
+import { AdminLoginGate } from './components/AdminLoginGate';
 
 const MainContent: React.FC = () => {
-  const { activeView } = useStore();
+  const { activeView, isAdminAuthenticated } = useStore();
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f9f9f9] text-[#1a1c1c]">
@@ -47,7 +48,7 @@ const MainContent: React.FC = () => {
         {activeView === 'payment' && <PaymentView />}
         {activeView === 'order-confirmation' && <OrderConfirmationView />}
         {activeView === 'order-track' && <OrderTrackerView />}
-        {activeView === 'admin' && <AdminDashboard />}
+        {activeView === 'admin' && (isAdminAuthenticated ? <AdminDashboard /> : <AdminLoginGate />)}
       </main>
 
       <Footer />

@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
+import { Product } from '../types';
 
 export const CuratedFlagships: React.FC = () => {
   const { products, addToCart, setActiveProductModal, setActiveView } = useStore();
 
-  // Find the 3 flagship products
-  const serum = products.find((p) => p.id === 'prod-revive-serum');
-  const cleaner = products.find((p) => p.id === 'prod-botanical-cleaner');
-  const soap = products.find((p) => p.id === 'prod-charcoal-soap');
+  // Find the flagship AKIA products from brochure
+  const thulasiSoap = products.find((p) => p.id === 'prod-thulasi-soap') || products[0];
+  const hairOil = products.find((p) => p.id === 'prod-bhringraj-hair-oil') || products[1];
+  const manjisthadiWash = products.find((p) => p.id === 'prod-manjisthadi-facewash') || products[2];
 
-  const flagships = [serum, cleaner, soap].filter(Boolean);
+  const flagships = [thulasiSoap, hairOil, manjisthadiWash].filter((p): p is Product => Boolean(p));
 
   // Local state for selected variant indices
   const [selectedVariants, setSelectedVariants] = useState<{ [key: string]: number }>({
-    'prod-revive-serum': 0,
-    'prod-botanical-cleaner': 0,
-    'prod-charcoal-soap': 0,
+    'prod-thulasi-soap': 0,
+    'prod-bhringraj-hair-oil': 0,
+    'prod-manjisthadi-facewash': 0,
   });
 
   const handleVariantSelect = (productId: string, variantIndex: number) => {
@@ -32,46 +33,46 @@ export const CuratedFlagships: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-12">
             <div className="space-y-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="material-symbols-outlined text-black text-[20px]">science</span>
+                <span className="material-symbols-outlined text-[#8B261D] text-[20px]">eco</span>
                 <span className="text-[11px] font-semibold uppercase tracking-widest text-black">
-                  Small-Batch Craft
+                  Sulphate & Paraben Free
                 </span>
               </div>
               <p className="text-[13px] text-[#5e5e5e] leading-snug">
-                Under 200 units per formulation, hand-numbered and tested.
+                100% natural, cold-cured botanical soaps safe for sensitive skin.
               </p>
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="material-symbols-outlined text-black text-[20px]">verified</span>
+                <span className="material-symbols-outlined text-[#8B261D] text-[20px]">verified</span>
                 <span className="text-[11px] font-semibold uppercase tracking-widest text-black">
-                  100% Honest INCI
+                  Handcrafted in Kerala
                 </span>
               </div>
               <p className="text-[13px] text-[#5e5e5e] leading-snug">
-                No vague "parfum", no fillers. Every molecule declared.
+                Small-batch artisan preparation honoring authentic herbal traditions.
               </p>
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="material-symbols-outlined text-black text-[20px]">recycling</span>
+                <span className="material-symbols-outlined text-[#8B261D] text-[20px]">spa</span>
                 <span className="text-[11px] font-semibold uppercase tracking-widest text-black">
-                  Plastic Neutral
+                  Pure Herbal Actives
                 </span>
               </div>
               <p className="text-[13px] text-[#5e5e5e] leading-snug">
-                100% infinitely recyclable apothecary amber glass & metal caps.
+                Enriched with Thulasi, Neem, Manjistha, Red Sandal, & Brahmi.
               </p>
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="material-symbols-outlined text-black text-[20px]">spa</span>
+                <span className="material-symbols-outlined text-[#8B261D] text-[20px]">phone_in_talk</span>
                 <span className="text-[11px] font-semibold uppercase tracking-widest text-black">
-                  Cruelty Free & Vegan
+                  Direct Phone / WhatsApp
                 </span>
               </div>
               <p className="text-[13px] text-[#5e5e5e] leading-snug">
-                Cold-pressed vegetal actives. Zero animal derivative tests.
+                Call 8078462709 or 9497802709 for personalized consultations.
               </p>
             </div>
           </div>
@@ -87,14 +88,14 @@ export const CuratedFlagships: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-3 border-b border-[#E5E5E5] gap-4">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#5e5e5e] mb-1">
-                Curated Flagships
+                AKIA Flagships
               </p>
-              <h2 className="text-3xl lg:text-4xl text-black tracking-tight font-normal">
+              <h2 className="text-3xl lg:text-4xl text-black tracking-tight font-serif font-normal">
                 Loved on repeat
               </h2>
             </div>
             <p className="text-[11px] font-mono text-[#5e5e5e] uppercase tracking-widest">
-              Permanent Formulations / Constant Replenishment
+              Brochure Highlights / Daily Botanical Rituals
             </p>
           </div>
 
@@ -114,17 +115,17 @@ export const CuratedFlagships: React.FC = () => {
                   {/* Image Container */}
                   <div
                     onClick={() => setActiveProductModal(product)}
-                    className="relative w-full aspect-square overflow-hidden bg-[#F5F4F2] flex items-center justify-center p-8 cursor-pointer"
+                    className="relative w-full aspect-square overflow-hidden bg-[#F5F4F2] flex items-center justify-center p-4 cursor-pointer"
                   >
                     {product.badge && (
-                      <span className="absolute top-4 left-4 z-10 bg-black text-white text-[11px] uppercase tracking-widest px-2.5 py-1">
+                      <span className="absolute top-4 left-4 z-10 bg-[#8B261D] text-white text-[11px] uppercase tracking-widest px-2.5 py-1 font-mono">
                         {product.badge}
                       </span>
                     )}
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                     />
                   </div>
 
@@ -138,66 +139,63 @@ export const CuratedFlagships: React.FC = () => {
                             {product.rating} ({product.reviewCount})
                           </span>
                         </div>
-                        <span className="text-[11px] uppercase tracking-wider text-[#5e5e5e] font-mono">
-                          {product.weight}
+                        <span className="text-[12px] font-mono text-[#5e5e5e]">
+                          {product.categoryName}
                         </span>
                       </div>
 
                       <h3
                         onClick={() => setActiveProductModal(product)}
-                        className="text-lg font-medium text-black mb-1 cursor-pointer hover:underline underline-offset-4"
+                        className="text-lg font-medium text-black cursor-pointer hover:underline decoration-1 underline-offset-4"
                       >
                         {product.name}
                       </h3>
-                      <p className="text-[13px] text-[#5e5e5e] mb-4 line-clamp-2 leading-relaxed">
+
+                      <p className="mt-2 text-[13px] text-[#5e5e5e] line-clamp-2 leading-relaxed">
                         {product.description}
                       </p>
                     </div>
 
-                    <div className="pt-4 border-t border-[#E5E5E5]">
-                      {/* Variant Selector Chips if available */}
-                      {product.variants && product.variants.length > 0 && (
-                        <div className="flex items-center gap-2 mb-4">
-                          {product.variants.map((v, idx) => (
+                    <div className="mt-6 pt-4 border-t border-[#E5E5E5]">
+                      {/* Variant Selection if available */}
+                      {product.variants && product.variants.length > 1 && (
+                        <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-1">
+                          {product.variants.map((variant, idx) => (
                             <button
-                              key={v.name}
+                              key={variant.name}
                               type="button"
                               onClick={() => handleVariantSelect(product.id, idx)}
-                              className={`px-3 py-1 text-xs transition-colors rounded-none border ${
+                              className={`text-[11px] px-2.5 py-1 border transition-colors whitespace-nowrap font-mono ${
                                 vIndex === idx
                                   ? 'border-black bg-black text-white'
-                                  : 'border-[#E5E5E5] hover:border-black text-[#5e5e5e]'
+                                  : 'border-[#E5E5E5] text-[#5e5e5e] hover:border-black'
                               }`}
                             >
-                              {v.name}
+                              {variant.name}
                             </button>
                           ))}
                         </div>
                       )}
 
-                      {/* Price and Add to Cart */}
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex flex-col">
-                          <span className="text-lg text-black font-semibold font-mono">
-                            ₹{displayPrice.toLocaleString('en-IN')}
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-xl font-medium text-black font-mono">
+                            ₹{displayPrice}
                           </span>
                           {product.marketRate && (
-                            <span className="text-[11px] text-[#5e5e5e] line-through font-mono">
-                              Mkt: ₹{product.marketRate.toLocaleString('en-IN')}
+                            <span className="text-[13px] text-[#747878] line-through font-mono">
+                              ₹{product.marketRate}
                             </span>
                           )}
                         </div>
 
                         <button
                           type="button"
-                          onClick={() => {
-                            const chosenVariant = product.variants?.[vIndex];
-                            addToCart(product, chosenVariant?.name, 1);
-                          }}
-                          className="h-10 px-4 bg-black text-white text-[12px] uppercase tracking-widest hover:bg-neutral-800 transition-colors flex items-center gap-1.5"
+                          onClick={() => addToCart(product, currentVariant?.name, 1)}
+                          className="h-10 px-5 bg-black text-white hover:bg-[#8B261D] text-[12px] uppercase tracking-widest font-medium transition-colors flex items-center gap-1.5"
                         >
-                          <span className="material-symbols-outlined text-[16px]">add</span>
-                          <span>Add to Cart</span>
+                          <span className="material-symbols-outlined text-[16px]">add_shopping_cart</span>
+                          <span>Acquire</span>
                         </button>
                       </div>
                     </div>
@@ -207,16 +205,18 @@ export const CuratedFlagships: React.FC = () => {
             })}
           </div>
 
-          {/* View Complete Formulations Index */}
+          {/* Bottom view all link */}
           <div className="mt-12 text-center">
             <button
+              type="button"
               onClick={() => {
                 setActiveView('catalogue');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="inline-flex items-center justify-center h-12 px-8 border border-black text-black hover:bg-black hover:text-white transition-colors text-[12px] uppercase tracking-widest"
+              className="inline-flex items-center gap-2 text-[12px] uppercase tracking-widest text-black border-b border-black pb-1 hover:text-[#8B261D] hover:border-[#8B261D] transition-colors"
             >
-              View Complete Formulations Index ({products.length})
+              <span>Explore All 16 Formulations In Catalogue</span>
+              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
           </div>
         </div>
