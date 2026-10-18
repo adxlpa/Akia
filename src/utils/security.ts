@@ -58,26 +58,24 @@ export function generateSecureToken(): string {
 export async function computeSessionSignature(
   token: string,
   username: string,
-  expiresAt: number,
   secretHash: string
 ): Promise<string> {
-  return hashPassword(`${token}:${username}:${expiresAt}`, secretHash);
+  return hashPassword(`${token}:${username}`, secretHash);
 }
 
 /**
  * Verifies that an Admin Session was signed with the valid secret hash and has not been forged in LocalStorage.
  */
 export async function verifySessionSignature(
-  session: { token: string; username: string; expiresAt: number; signature?: string },
+  session: { token: string; username: string; expiresAt?: number; signature?: string },
   secretHash: string
 ): Promise<boolean> {
-  if (!session.signature || !session.token || !session.username || !session.expiresAt) {
+  if (!session.signature || !session.token || !session.username) {
     return false;
   }
   const expectedSignature = await computeSessionSignature(
     session.token,
     session.username,
-    session.expiresAt,
     secretHash
   );
   return timingSafeEqual(session.signature, expectedSignature);

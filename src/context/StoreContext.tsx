@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
   Category,
   Product,
@@ -419,14 +419,20 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => {
       isMounted = false;
     };
-  }, [adminSession, adminCredentials.passwordHash]);
+  }, [adminSession?.token, adminCredentials.passwordHash]);
 
-  // Refresh session activity on user interaction when logged in
+  const lastRefreshRef = useRef<number>(Date.now());
+
+  // Refresh session activity on user interaction when logged in (throttled to once a minute)
   const refreshSessionActivity = useCallback(() => {
-    if (adminSession && Date.now() < adminSession.expiresAt) {
-      setAdminSession((prev) =>
-        prev ? { ...prev, expiresAt: Date.now() + SESSION_DURATION_MS } : null
-      );
+    const now = Date.now();
+    if (adminSession && now - lastRefreshRef.current > 60 * 1000) {
+      lastRefreshRef.current = now;
+      if (now < adminSession.expiresAt) {
+        setAdminSession((prev) =>
+          prev ? { ...prev, expiresAt: now + SESSION_DURATION_MS } : null
+        );
+      }
     }
   }, [adminSession]);
 
@@ -657,7 +663,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const signature = await computeSessionSignature(
         token,
         adminCredentials.username,
-        expiresAt,
         adminCredentials.passwordHash
       );
       const newSession: AdminSession = {
