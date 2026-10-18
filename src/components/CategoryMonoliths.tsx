@@ -44,12 +44,12 @@ export const CategoryMonoliths: React.FC = () => {
   return (
     <section className="w-full py-16 lg:py-24 bg-white border-y border-[#E5E5E5]">
       <div className="max-w-[1440px] mx-auto px-5 lg:px-20">
-        <div className="mb-10 pb-3 border-b border-[#E5E5E5] flex items-end justify-between">
+        <div className="mb-10 pb-3 border-b border-[#E5E5E5] flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#5e5e5e] mb-1 font-mono">
               Botanical Disciplines
             </p>
-            <h2 className="text-3xl lg:text-4xl text-black tracking-tight font-serif font-normal">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl text-black tracking-tight font-serif font-normal">
               Shop by category
             </h2>
           </div>

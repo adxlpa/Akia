@@ -23,6 +23,9 @@ import { OrderTrackerView } from './components/OrderTrackerView';
 import { SearchModal } from './components/SearchModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginGate } from './components/AdminLoginGate';
+import { AboutView } from './components/AboutView';
+import { ReviewsView } from './components/ReviewsView';
+import { ContactView } from './components/ContactView';
 
 const MainContent: React.FC = () => {
   const { activeView, isAdminAuthenticated } = useStore();
@@ -44,6 +47,9 @@ const MainContent: React.FC = () => {
         )}
 
         {activeView === 'catalogue' && <CatalogueView />}
+        {activeView === 'about' && <AboutView />}
+        {activeView === 'reviews' && <ReviewsView />}
+        {activeView === 'contact' && <ContactView />}
         {activeView === 'checkout' && <CheckoutView />}
         {activeView === 'payment' && <PaymentView />}
         {activeView === 'order-confirmation' && <OrderConfirmationView />}

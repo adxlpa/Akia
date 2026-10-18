@@ -1,6 +1,8 @@
 import React from 'react';
+import { useStore } from '../context/StoreContext';
 
 export const TestimonialsSection: React.FC = () => {
+  const { setActiveView } = useStore();
   const reviews = [
     {
       stars: 5,
@@ -79,6 +81,21 @@ export const TestimonialsSection: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Link to Dedicated Reviews Page */}
+        <div className="mt-10 sm:mt-12 text-center">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveView('reviews');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="h-11 px-6 bg-white border border-black hover:bg-black hover:text-white text-black text-xs uppercase tracking-widest font-mono font-medium transition-colors inline-flex items-center gap-2 shadow-xs"
+          >
+            <span>Read All Verified Customer Reviews (8)</span>
+            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </button>
         </div>
       </div>
     </section>

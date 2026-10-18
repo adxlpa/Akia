@@ -28,7 +28,7 @@ export const ProductDetailModal: React.FC = () => {
       onClick={() => setActiveProductModal(null)}
     >
       <div
-        className="bg-white max-w-4xl w-full border border-[#E5E5E5] shadow-2xl relative my-8 overflow-hidden"
+        className="bg-white max-w-4xl w-full border border-[#E5E5E5] shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}

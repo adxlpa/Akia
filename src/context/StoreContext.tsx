@@ -55,8 +55,8 @@ interface StoreContextType {
   cart: CartItem[];
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
-  activeView: 'home' | 'catalogue' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track';
-  setActiveView: (view: 'home' | 'catalogue' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track') => void;
+  activeView: 'home' | 'catalogue' | 'about' | 'reviews' | 'contact' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track';
+  setActiveView: (view: 'home' | 'catalogue' | 'about' | 'reviews' | 'contact' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track') => void;
   selectedCategoryFilter: string | null;
   setSelectedCategoryFilter: (catId: string | null) => void;
   searchModalOpen: boolean;
@@ -268,7 +268,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [supabaseMessage, setSupabaseMessage] = useState<string>('Supabase not configured');
 
   const [cartOpen, setCartOpen] = useState(false);
-  const [activeView, setActiveView] = useState<'home' | 'catalogue' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track'>('home');
+  const [activeView, setActiveView] = useState<'home' | 'catalogue' | 'about' | 'reviews' | 'contact' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track'>('home');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | null>(null);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

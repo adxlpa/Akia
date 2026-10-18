@@ -28,16 +28,16 @@ export const HeroSection: React.FC = () => {
 
       <div className="relative max-w-[1440px] mx-auto px-5 lg:px-20 py-10 lg:py-16 flex flex-col items-center">
         {/* Monograph Header Bar */}
-        <div className="w-full flex items-center justify-between border-b border-[#E5E5E5] pb-3 mb-8">
+        <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-[#E5E5E5] pb-3 mb-6 sm:mb-8 gap-2 text-left">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-[#8B261D]"></span>
-            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase text-black font-mono">
+            <span className="w-2 h-2 bg-[#8B261D] shrink-0"></span>
+            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] uppercase text-black font-mono">
               AKIA BOTANICAL ESSENTIALS
             </span>
           </div>
-          <div className="flex items-center gap-3 text-[12px] uppercase text-[#5e5e5e] tracking-widest font-mono">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] sm:text-[12px] uppercase text-[#5e5e5e] tracking-widest font-mono">
             <span>Sulphate Free & Paraben Free</span>
-            <span className="text-[#E5E5E5]">/</span>
+            <span className="text-[#E5E5E5] hidden sm:inline">/</span>
             <span>Handmade in Kerala</span>
           </div>
         </div>

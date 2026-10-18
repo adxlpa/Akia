@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="w-full bg-[#F5F4F2] border-t border-[#E5E5E5]">
+    <footer className="w-full bg-[#F5F4F2] border-t border-[#E5E5E5] pb-20 lg:pb-0">
       <div className="max-w-[1440px] mx-auto px-5 lg:px-20 py-16 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Col 1: Brand Info */}
@@ -129,18 +129,25 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setActiveView('home');
-                    setTimeout(() => {
-                      document.getElementById('brand-story')?.scrollIntoView({ behavior: 'smooth' });
-                    }, 50);
+                    setActiveView('about');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-black transition-colors text-left"
+                  className="hover:text-black transition-colors text-left font-medium text-black"
                 >
-                  The AKIA Story
+                  The AKIA Story & Heritage
                 </button>
               </li>
               <li>
-                <span className="text-[#5e5e5e]">Cold-Process Soap Curing</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('about');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-black transition-colors text-left"
+                >
+                  Cold-Process Soap Curing
+                </button>
               </li>
               <li>
                 <span className="text-[#5e5e5e]">Zero Sulphates, Zero Parabens</span>
@@ -152,14 +159,12 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setActiveView('home');
-                    setTimeout(() => {
-                      document.getElementById('customer-reviews')?.scrollIntoView({ behavior: 'smooth' });
-                    }, 50);
+                    setActiveView('reviews');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hover:text-black transition-colors text-left"
+                  className="hover:text-black transition-colors text-left font-medium text-black"
                 >
-                  Client Testimonials
+                  Customer Reviews (4.9★)
                 </button>
               </li>
             </ul>
@@ -174,10 +179,25 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   type="button"
-                  onClick={() => setActiveView('order-track')}
+                  onClick={() => {
+                    setActiveView('order-track');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className="hover:text-black transition-colors text-left font-medium underline underline-offset-4"
                 >
                   Track Consignment
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('contact');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-black transition-colors text-left font-medium text-black"
+                >
+                  Contact & Kerala Atelier
                 </button>
               </li>
               <li>
@@ -192,16 +212,16 @@ export const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <span className="text-[#5e5e5e]">Direct UPI QR Verification</span>
-              </li>
-              <li>
                 <span className="text-[#5e5e5e]">Free Shipping above ₹1,000</span>
               </li>
               <li>
                 {/* Discrete Staff / Admin Link */}
                 <button
                   type="button"
-                  onClick={() => setActiveView('admin')}
+                  onClick={() => {
+                    setActiveView('admin');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className="text-[12px] text-[#5e5e5e] hover:text-black transition-colors flex items-center gap-1.5 pt-2"
                   title="Administrative Portal"
                 >

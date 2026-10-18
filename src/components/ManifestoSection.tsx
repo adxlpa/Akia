@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useStore } from '../context/StoreContext';
 
 export const ManifestoSection: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const { setActiveView } = useStore();
 
   return (
     <>
@@ -24,14 +26,24 @@ export const ManifestoSection: React.FC = () => {
               <p className="text-[15px] sm:text-base text-[#5e5e5e] leading-relaxed">
                 Every soap bar is cured for 30 to 45 days with unrefined coconut oil, fresh aloe vera, holy thulasi, wild neem, and sacred red sandalwood. Our hair oils are slow-macerated with pure Brahmi and Bhringraj leaves to rejuvenate roots from scalp to tip.
               </p>
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('about');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="h-10 px-5 bg-black hover:bg-[#8B261D] text-white text-[11px] uppercase tracking-widest font-mono font-medium transition-colors inline-flex items-center gap-2"
+                >
+                  <span>Read Full Heritage Story</span>
+                  <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setModalOpen(true)}
-                  className="inline-flex items-center gap-2 text-[12px] uppercase tracking-widest text-black border-b border-black pb-1 hover:text-[#8B261D] hover:border-[#8B261D] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-widest text-[#5e5e5e] hover:text-black border-b border-[#5e5e5e] hover:border-black pb-0.5 transition-colors font-mono"
                 >
-                  <span>Read AKIA Handcrafting Standards</span>
-                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                  <span>Purity Standards</span>
                 </button>
               </div>
             </div>
