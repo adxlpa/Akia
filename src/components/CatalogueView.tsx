@@ -176,7 +176,13 @@ export const CatalogueView: React.FC = () => {
                 key={product.id}
                 product={product}
                 onSelect={() => setActiveProductModal(product)}
-                onAddToCart={() => addToCart(product, undefined, 1)}
+                onAddToCart={() => {
+                  if (product.variants && product.variants.length > 1) {
+                    setActiveProductModal(product);
+                  } else {
+                    addToCart(product, undefined, 1);
+                  }
+                }}
               />
             ))}
           </div>
@@ -195,6 +201,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect, onAddToCart }) => {
   const isOutOfStock = product.stock <= 0;
   const savings = product.marketRate && product.marketRate > product.price ? product.marketRate - product.price : 0;
+  const hasMultipleVariants = product.variants && product.variants.length > 1;
 
   return (
     <div className="group flex flex-col bg-white border border-[#E5E5E5] hover:border-black transition-colors duration-200">
@@ -235,7 +242,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect, onAddToCar
         <div>
           <div className="flex items-center justify-between mb-1 text-[11px] text-[#5e5e5e] font-mono">
             <span className="uppercase">{product.categoryName}</span>
-            <span>{product.weight}</span>
+            <span>{hasMultipleVariants ? `${product.variants!.length} Sizes Available` : product.weight}</span>
           </div>
 
           <h3
@@ -248,6 +255,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect, onAddToCar
           <p className="text-[12px] text-[#5e5e5e] mb-3 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
+
+          {hasMultipleVariants && (
+            <div className="flex flex-wrap gap-1 mb-3">
+              {product.variants!.map((v) => (
+                <span
+                  key={v.name}
+                  onClick={onSelect}
+                  className="cursor-pointer text-[10px] font-mono bg-[#f9f9f9] hover:bg-neutral-200 border border-[#E5E5E5] px-1.5 py-0.5 text-[#5e5e5e]"
+                >
+                  {v.weight || v.name}: ₹{v.price}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="pt-3 border-t border-[#E5E5E5]">
@@ -255,7 +276,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect, onAddToCar
             <div className="flex flex-col">
               <div className="flex items-baseline gap-2">
                 <span className="text-[16px] font-semibold text-black font-mono">
-                  ₹{product.price.toLocaleString('en-IN')}
+                  {hasMultipleVariants ? `From ₹${Math.min(...product.variants!.map(v => v.price))}` : `₹${product.price.toLocaleString('en-IN')}`}
                 </span>
                 {product.marketRate && (
                   <span className="text-[11px] text-[#747878] line-through font-mono">
@@ -294,9 +315,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect, onAddToCar
             }`}
           >
             <span className="material-symbols-outlined text-[15px]">
-              {isOutOfStock ? 'block' : 'add'}
+              {isOutOfStock ? 'block' : (hasMultipleVariants ? 'tune' : 'add')}
             </span>
-            <span>{isOutOfStock ? 'Out of Stock' : 'Add to Bag'}</span>
+            <span>{isOutOfStock ? 'Out of Stock' : (hasMultipleVariants ? 'Select Size / Add' : 'Add to Bag')}</span>
           </button>
         </div>
       </div>

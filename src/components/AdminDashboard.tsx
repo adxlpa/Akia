@@ -74,7 +74,20 @@ export const AdminDashboard: React.FC = () => {
   // Product Management Form State
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [prodFormData, setProdFormData] = useState({
+  const [prodFormData, setProdFormData] = useState<{
+    name: string;
+    categoryId: string;
+    description: string;
+    price: number;
+    marketRate: number;
+    weight: string;
+    stock: number;
+    imageUrl: string;
+    isActive: boolean;
+    badge: string;
+    inci: string;
+    variants: Array<{ name: string; price: number; weight: string }>;
+  }>({
     name: '',
     categoryId: categories[0]?.id || '',
     description: '',
@@ -86,6 +99,7 @@ export const AdminDashboard: React.FC = () => {
     isActive: true,
     badge: '',
     inci: '',
+    variants: [],
   });
 
   // Settings Form State
@@ -182,6 +196,14 @@ export const AdminDashboard: React.FC = () => {
     const cleanMarketRate = prodFormData.marketRate ? Math.max(0, Number(prodFormData.marketRate) || 0) : undefined;
     const cleanStock = Math.max(0, Math.floor(Number(prodFormData.stock) || 0));
 
+    const cleanVariants = prodFormData.variants
+      .filter((v) => v.name.trim() !== '')
+      .map((v) => ({
+        name: sanitizeInput(v.name.trim()),
+        price: Math.max(0, Number(v.price) || 0),
+        weight: sanitizeInput(v.weight.trim() || prodFormData.weight),
+      }));
+
     if (editingProduct) {
       updateProduct(editingProduct.id, {
         name: sanitizeInput(prodFormData.name),
@@ -196,6 +218,7 @@ export const AdminDashboard: React.FC = () => {
         isActive: prodFormData.isActive,
         badge: prodFormData.badge ? sanitizeInput(prodFormData.badge) : undefined,
         inci: prodFormData.inci ? sanitizeInput(prodFormData.inci) : undefined,
+        variants: cleanVariants.length > 0 ? cleanVariants : undefined,
       });
       setEditingProduct(null);
     } else {
@@ -212,6 +235,7 @@ export const AdminDashboard: React.FC = () => {
         isActive: prodFormData.isActive,
         badge: prodFormData.badge ? sanitizeInput(prodFormData.badge) : undefined,
         inci: prodFormData.inci ? sanitizeInput(prodFormData.inci) : undefined,
+        variants: cleanVariants.length > 0 ? cleanVariants : undefined,
       });
       setIsAddingProduct(false);
     }
@@ -228,6 +252,7 @@ export const AdminDashboard: React.FC = () => {
       isActive: true,
       badge: '',
       inci: '',
+      variants: [],
     });
   };
 
@@ -719,6 +744,20 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 onClick={() => {
                   setEditingProduct(null);
+                  setProdFormData({
+                    name: '',
+                    categoryId: categories[0]?.id || '',
+                    description: '',
+                    price: 100,
+                    marketRate: 150,
+                    weight: '100 gm',
+                    stock: 20,
+                    imageUrl: '',
+                    isActive: true,
+                    badge: '',
+                    inci: '',
+                    variants: [],
+                  });
                   setIsAddingProduct(true);
                 }}
                 className="h-10 px-4 bg-black text-white text-xs uppercase tracking-widest font-semibold flex items-center gap-1.5"
@@ -751,6 +790,15 @@ export const AdminDashboard: React.FC = () => {
                       <p className="text-[11px] font-mono text-[#5e5e5e]">
                         Stock: {prod.stock > 0 ? `${prod.stock} units` : <span className="text-red-600 font-semibold">OUT OF STOCK</span>} • {prod.weight}
                       </p>
+                      {prod.variants && prod.variants.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {prod.variants.map((v) => (
+                            <span key={v.name} className="inline-block text-[9px] font-mono bg-[#F5F4F2] border border-[#E5E5E5] px-1.5 py-0.5 text-[#5e5e5e]">
+                              {v.weight || v.name}: ₹{v.price}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -779,6 +827,7 @@ export const AdminDashboard: React.FC = () => {
                             isActive: prod.isActive,
                             badge: prod.badge || '',
                             inci: prod.inci || '',
+                            variants: prod.variants ? prod.variants.map((v) => ({ ...v })) : [],
                           });
                           setIsAddingProduct(true);
                         }}
@@ -937,6 +986,117 @@ export const AdminDashboard: React.FC = () => {
                         placeholder="Full botanical chemical names (e.g. Saponified Cocos Nucifera, Tocopherol)"
                         className="w-full h-10 px-3 bg-[#f9f9f9] border border-[#E5E5E5] text-xs focus:outline-none focus:border-black"
                       />
+                    </div>
+
+                    {/* Size & Quantity Variants Section */}
+                    <div className="p-4 bg-[#fcfcfc] border border-[#E5E5E5] space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                          <label className="block uppercase text-black font-semibold text-xs tracking-wider">
+                            Different Quantities & Sizes (Optional Variants)
+                          </label>
+                          <p className="text-[11px] text-[#5e5e5e] font-sans">
+                            Configure multiple sizes or packs (e.g. 50g, 100g, 200g or 100 ml, 200 ml) with custom prices. Customers can select their preferred quantity on the storefront.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProdFormData({
+                              ...prodFormData,
+                              variants: [
+                                ...prodFormData.variants,
+                                {
+                                  name: '',
+                                  weight: prodFormData.weight || '',
+                                  price: prodFormData.price || 100,
+                                },
+                              ],
+                            });
+                          }}
+                          className="h-8 px-3 bg-black text-white text-[11px] uppercase tracking-wider font-semibold flex items-center justify-center gap-1 hover:bg-neutral-800 flex-shrink-0"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">add</span>
+                          <span>Add Quantity / Size</span>
+                        </button>
+                      </div>
+
+                      {prodFormData.variants.length === 0 ? (
+                        <div className="p-3 bg-white border border-dashed border-[#E5E5E5] text-center text-[#747878] text-[11px]">
+                          No custom quantity variants added. Product will sell as a single size ({prodFormData.weight || 'Default'}) at ₹{prodFormData.price}. Click &quot;Add Quantity / Size&quot; above to create multiple options.
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          {prodFormData.variants.map((v, idx) => (
+                            <div key={idx} className="flex items-center gap-2 bg-white p-2.5 border border-[#E5E5E5]">
+                              <div className="flex-grow grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <div>
+                                  <label className="block text-[10px] uppercase text-[#747878] mb-0.5">
+                                    Option Label *
+                                  </label>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={v.name}
+                                    placeholder="e.g. 100 ml Flacon"
+                                    onChange={(e) => {
+                                      const newVariants = [...prodFormData.variants];
+                                      newVariants[idx] = { ...newVariants[idx], name: e.target.value };
+                                      setProdFormData({ ...prodFormData, variants: newVariants });
+                                    }}
+                                    className="w-full h-8 px-2 bg-[#f9f9f9] border border-[#E5E5E5] text-xs focus:outline-none focus:border-black"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-[10px] uppercase text-[#747878] mb-0.5">
+                                    Quantity / Weight *
+                                  </label>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={v.weight}
+                                    placeholder="e.g. 100 ml or 200g"
+                                    onChange={(e) => {
+                                      const newVariants = [...prodFormData.variants];
+                                      newVariants[idx] = { ...newVariants[idx], weight: e.target.value };
+                                      setProdFormData({ ...prodFormData, variants: newVariants });
+                                    }}
+                                    className="w-full h-8 px-2 bg-[#f9f9f9] border border-[#E5E5E5] text-xs focus:outline-none focus:border-black"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-[10px] uppercase text-[#747878] mb-0.5">
+                                    Price (₹) *
+                                  </label>
+                                  <input
+                                    type="number"
+                                    required
+                                    min={1}
+                                    value={v.price}
+                                    onChange={(e) => {
+                                      const newVariants = [...prodFormData.variants];
+                                      newVariants[idx] = { ...newVariants[idx], price: Number(e.target.value) };
+                                      setProdFormData({ ...prodFormData, variants: newVariants });
+                                    }}
+                                    className="w-full h-8 px-2 bg-[#f9f9f9] border border-[#E5E5E5] text-xs font-semibold focus:outline-none focus:border-black"
+                                  />
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                title="Remove Variant"
+                                onClick={() => {
+                                  const newVariants = prodFormData.variants.filter((_, i) => i !== idx);
+                                  setProdFormData({ ...prodFormData, variants: newVariants });
+                                }}
+                                className="w-8 h-8 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 self-end"
+                              >
+                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     {/* Admin Image Uploader with Supabase Storage Integration */}
