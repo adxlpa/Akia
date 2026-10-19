@@ -58,12 +58,13 @@ ${order.deliveryInstructions ? `*Delivery Notes:* ${order.deliveryInstructions}\
 ${itemsText}
 
 ━━━━━━━━━━━━━━━━━━━━
-*Subtotal:* ₹${order.subtotal}
-*Delivery Charge:* ${order.deliveryCharge === 0 ? 'FREE' : `₹${order.deliveryCharge}`}
-*TOTAL AMOUNT PAID:* ₹${order.totalAmount}
+*Subtotal (Products):* ₹${order.subtotal}
+*Delivery Charge:* Extra (Location-based — to be calculated)
+*TOTAL AMOUNT PAID (PRODUCTS):* ₹${order.totalAmount}
 *Payment Method:* UPI
 *Payment Status:* Paid / Submitted
 
+📦 *DELIVERY FEE NOTE:* I understand that delivery charges depend on my location and will be informed via WhatsApp once my order is packed and ready for dispatch.
 📸 *PAYMENT SCREENSHOT:* (Attaching screenshot with this message)
 Please verify payment and confirm dispatch!`;
 
@@ -101,11 +102,28 @@ Please verify payment and confirm dispatch!`;
               Order Ref: <strong className="text-[#8B261D]">{order.orderNumber}</strong>
             </span>
             <span className="px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-800">
-              Total Paid: <strong>₹{order.totalAmount.toLocaleString('en-IN')}</strong>
+              Total Products Paid: <strong>₹{order.totalAmount.toLocaleString('en-IN')}</strong>
             </span>
             <span className="px-3.5 py-1.5 bg-[#F5F4F2] border border-[#E5E5E5] text-black">
               Status: <strong>READY FOR DISPATCH</strong>
             </span>
+          </div>
+        </div>
+
+        {/* Delivery Fee Notice Alert Box */}
+        <div className="bg-amber-50 border-2 border-amber-400 p-5 sm:p-6 mb-8 shadow-xs">
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-[24px]">local_shipping</span>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm sm:text-base font-bold text-amber-950 font-mono uppercase tracking-wide">
+                Delivery Fee Notice: Charges are Extra Based on Location
+              </h3>
+              <p className="text-xs sm:text-sm text-amber-900 font-sans leading-relaxed">
+                The amount paid above covers your <strong>handcrafted products only</strong>. Because shipping rates depend on your exact delivery location (PIN code) and package weight, the <strong>delivery fee will be extra</strong> and our team will notify you directly via WhatsApp once your order is prepared, weighed, and ready for dispatch.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -191,12 +209,14 @@ Please verify payment and confirm dispatch!`;
                 <span>Items Subtotal</span>
                 <span>₹{order.subtotal.toLocaleString('en-IN')}</span>
               </div>
-              <div className="flex justify-between text-[#5e5e5e]">
+              <div className="flex flex-col sm:flex-row sm:justify-between text-[#5e5e5e] gap-1">
                 <span>Delivery Charge</span>
-                <span>{order.deliveryCharge === 0 ? 'FREE' : `₹${order.deliveryCharge}`}</span>
+                <span className="text-amber-800 font-semibold text-[11px] bg-amber-50 px-2 py-0.5 border border-amber-200 inline-block self-start sm:self-auto">
+                  Extra • Informed via WhatsApp after packing
+                </span>
               </div>
               <div className="flex justify-between text-base font-bold text-black pt-2 border-t border-[#E5E5E5]">
-                <span>Total Amount Paid</span>
+                <span>Total Amount Paid (Products)</span>
                 <span className="text-[#8B261D]">₹{order.totalAmount.toLocaleString('en-IN')}</span>
               </div>
             </div>

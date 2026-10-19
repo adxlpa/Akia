@@ -785,12 +785,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Calculations
+  // Calculations (Delivery charge is location-based and notified via WhatsApp after packing)
   const cartSubtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const isShippingFree = cartSubtotal >= settings.freeShippingThreshold;
-  const shippingRemaining = Math.max(0, settings.freeShippingThreshold - cartSubtotal);
-  const calculatedDeliveryCharge = cartSubtotal === 0 ? 0 : (isShippingFree ? 0 : settings.deliveryCharge);
+  const isShippingFree = false;
+  const shippingRemaining = 0;
+  const calculatedDeliveryCharge = 0;
 
   // Cart Handlers
   const addToCart = (product: Product, variantName?: string, quantity = 1) => {

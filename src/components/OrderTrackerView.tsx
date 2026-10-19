@@ -248,10 +248,10 @@ export const OrderTrackerView: React.FC = () => {
                 </div>
                 <div className="flex justify-between text-[#5e5e5e]">
                   <span>Delivery Charge</span>
-                  <span>{searchedOrder.deliveryCharge === 0 ? 'FREE' : `₹${searchedOrder.deliveryCharge}`}</span>
+                  <span>{searchedOrder.deliveryCharge === 0 ? 'Extra (Informed via WhatsApp)' : `₹${searchedOrder.deliveryCharge}`}</span>
                 </div>
                 <div className="flex justify-between text-sm font-semibold text-black pt-2 border-t border-[#E5E5E5]">
-                  <span>Total Amount Paid</span>
+                  <span>Total Products Paid</span>
                   <span>₹{searchedOrder.totalAmount.toLocaleString('en-IN')}</span>
                 </div>
               </div>

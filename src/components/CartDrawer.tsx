@@ -177,16 +177,16 @@ export const CartDrawer: React.FC = () => {
                   ₹{cartSubtotal.toLocaleString('en-IN')}
                 </span>
               </div>
-              <div className="flex justify-between text-xs">
-                <span>Standard Dispatch</span>
-                <span className="text-black uppercase tracking-wider font-mono font-medium">
-                  {calculatedDeliveryCharge === 0 ? 'Free' : `₹${calculatedDeliveryCharge}`}
+              <div className="flex justify-between text-xs items-center">
+                <span>Delivery Charge</span>
+                <span className="text-black text-[11px] font-mono">
+                  Extra (Location-based)
                 </span>
               </div>
             </div>
 
             <p className="text-[11px] text-[#747878] text-center py-1">
-              Taxes calculated at checkout • Recyclable apothecary packing
+              Delivery fee is extra depending on location & weight, notified via WhatsApp after packing.
             </p>
 
             <button

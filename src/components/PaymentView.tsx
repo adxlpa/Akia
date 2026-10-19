@@ -74,9 +74,12 @@ export const PaymentView: React.FC = () => {
             </div>
             <div className="bg-black text-white px-5 py-2.5 font-mono text-right shadow-xs">
               <span className="text-[10px] uppercase tracking-widest text-white/70 block">
-                Total Amount Payable
+                Total for Products
               </span>
               <span className="text-2xl font-semibold">₹{order.totalAmount.toLocaleString('en-IN')}</span>
+              <span className="text-[10px] text-amber-300 block font-mono mt-0.5">
+                + Delivery fee extra via WhatsApp
+              </span>
             </div>
           </div>
         </div>
@@ -152,13 +155,24 @@ export const PaymentView: React.FC = () => {
                 </p>
               </div>
 
-              {/* Crucial Screenshot Notice Banner */}
+              {/* Delivery Fee Notice Banner */}
               <div className="p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-950 space-y-1">
                 <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase">
-                  <span className="material-symbols-outlined text-[18px] text-amber-700">photo_camera</span>
-                  <span>Take a Screenshot of Payment</span>
+                  <span className="material-symbols-outlined text-[18px] text-amber-700">local_shipping</span>
+                  <span>Delivery Fee is Extra (Location-Based)</span>
                 </div>
                 <p className="text-xs font-sans leading-relaxed text-amber-900">
+                  The payment above covers your <strong>handcrafted products only</strong>. Delivery charges depend on your delivery location and parcel weight. Once your parcel is packed and ready, our team will calculate the exact courier/postal charge and inform you via WhatsApp.
+                </p>
+              </div>
+
+              {/* Crucial Screenshot Notice Banner */}
+              <div className="p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-950 space-y-1">
+                <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase">
+                  <span className="material-symbols-outlined text-[18px] text-blue-700">photo_camera</span>
+                  <span>Take a Screenshot of Payment</span>
+                </div>
+                <p className="text-xs font-sans leading-relaxed text-blue-900">
                   After paying in your UPI app, please <strong>take a screenshot of the completed payment receipt</strong>. On the next page, you will confirm your order and send your details and screenshot to our WhatsApp with <strong>1 single click</strong>.
                 </p>
               </div>

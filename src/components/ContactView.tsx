@@ -15,8 +15,8 @@ export const ContactView: React.FC = () => {
       a: 'Every batch of AKIA soap cures naturally for 30 to 45 days in ambient conditions in Kerala. This long curing process evaporates excess moisture, resulting in a dense, long-lasting bar that retains naturally formed hydrating glycerin.',
     },
     {
-      q: 'What are the delivery times and shipping charges?',
-      a: `We provide Free Shipping across India on all orders of ₹${settings.freeShippingThreshold} and above. For orders under ₹${settings.freeShippingThreshold}, a flat delivery charge of ₹${settings.deliveryCharge} applies. Delivery within Kerala typically takes 1–2 business days; other Indian states take 3–5 business days.`,
+      q: 'How are delivery charges and shipping handled?',
+      a: 'Delivery charges depend directly on your destination PIN code, state, and parcel weight. Once you place an order, our atelier carefully packs and weighs your items, then informs you of the exact courier or Speed Post charge via WhatsApp before dispatch. Delivery within Kerala typically takes 1–2 business days; other Indian states take 3–5 business days.',
     },
     {
       q: 'How does payment and WhatsApp ordering work?',
@@ -146,7 +146,7 @@ export const ContactView: React.FC = () => {
                 All consignments are packed in protective eco-friendly packaging and shipped via Speed Post / DTDC.
               </p>
               <div className="bg-[#F5F4F2] p-3 border border-[#E5E5E5] space-y-1 font-mono text-[11px] text-black">
-                <div className="text-emerald-800 font-semibold">✓ Free Delivery on ₹{settings.freeShippingThreshold}+</div>
+                <div className="text-black font-semibold">📦 Location-based shipping calculated via WhatsApp</div>
                 <div className="text-[#5e5e5e]">UPI: {settings.upiId}</div>
               </div>
             </div>

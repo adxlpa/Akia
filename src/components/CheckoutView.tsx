@@ -386,21 +386,21 @@ export const CheckoutView: React.FC = () => {
               {/* Price Calculation breakdown */}
               <div className="space-y-2 text-xs font-mono">
                 <div className="flex justify-between text-[#5e5e5e]">
-                  <span>Subtotal</span>
+                  <span>Items Subtotal</span>
                   <span>₹{cartSubtotal.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between text-[#5e5e5e]">
+                <div className="flex justify-between text-[#5e5e5e] items-center">
                   <span>Delivery Charge</span>
-                  <span>{calculatedDeliveryCharge === 0 ? 'FREE' : `₹${calculatedDeliveryCharge}`}</span>
+                  <span className="text-amber-800 font-semibold text-[11px] bg-amber-50 px-2 py-0.5 border border-amber-200">
+                    Extra (Calculated by Location)
+                  </span>
                 </div>
-                {isShippingFree && (
-                  <p className="text-[11px] text-emerald-700 bg-emerald-50 p-2">
-                    ✓ Complimentary shipping threshold (₹{settings.freeShippingThreshold}) applied!
-                  </p>
-                )}
+                <div className="p-2.5 bg-amber-50/90 border border-amber-200 text-amber-900 text-[11px] font-sans leading-relaxed">
+                  <strong>📦 Delivery Fee Notice:</strong> Delivery charge depends on your delivery address and parcel weight. It is not included in this checkout and will be notified via WhatsApp once your parcel is packed and ready.
+                </div>
                 <div className="flex justify-between text-base font-semibold text-black border-t border-[#E5E5E5] pt-3">
-                  <span>Total Payable</span>
-                  <span className="text-xl">₹{totalPayable.toLocaleString('en-IN')}</span>
+                  <span>Total for Products</span>
+                  <span className="text-xl">₹{cartSubtotal.toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
