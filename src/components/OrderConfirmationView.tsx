@@ -4,6 +4,8 @@ import { useStore } from '../context/StoreContext';
 export const OrderConfirmationView: React.FC = () => {
   const { activeOrderForPayment, settings, setActiveView } = useStore();
   const [copiedMessage, setCopiedMessage] = useState(false);
+  const [hasSentWhatsApp, setHasSentWhatsApp] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(true);
 
   if (!activeOrderForPayment) {
     return (
@@ -78,39 +80,161 @@ Please verify payment and confirm dispatch!`;
     setTimeout(() => setCopiedMessage(false), 2500);
   };
 
+  const handleOpenWhatsApp = () => {
+    setHasSentWhatsApp(true);
+    setShowActionModal(false);
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
-    <div className="w-full bg-[#f9f9f9] min-h-screen pt-28 pb-20">
+    <div className="w-full bg-[#f9f9f9] min-h-screen pt-28 pb-32">
+      {/* ========================================================================= */}
+      {/* 1. IMMEDIATE POP-UP MODAL (Forces Attention on WhatsApp Submission) */}
+      {/* ========================================================================= */}
+      {showActionModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white max-w-md w-full border-2 border-[#25D366] p-6 sm:p-8 shadow-2xl text-center space-y-4 relative">
+            <div className="w-16 h-16 bg-[#25D366] text-white rounded-full flex items-center justify-center mx-auto shadow-md ring-4 ring-emerald-200 animate-pulse">
+              <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
+              </svg>
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-red-600 font-bold bg-red-50 border border-red-200 px-3 py-1 inline-block">
+                ⚠️ Final Step • Action Required
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-black font-mono pt-1">
+                Press to Send Order on WhatsApp
+              </h2>
+              <p className="text-xs sm:text-sm text-[#444] leading-relaxed pt-1">
+                Your order for <strong className="text-black">Order #{order.orderNumber}</strong> will{' '}
+                <strong className="text-black underline">only be completed and accepted for packing</strong> once you press the button below to send your details & payment receipt on WhatsApp!
+              </p>
+            </div>
+
+            <div className="pt-3 space-y-2.5">
+              <button
+                type="button"
+                onClick={handleOpenWhatsApp}
+                className="w-full h-14 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-mono uppercase tracking-widest font-bold flex items-center justify-center gap-2.5 shadow-lg transition-transform active:scale-95"
+              >
+                <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
+                </svg>
+                <span>Press Here to Send to WhatsApp →</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowActionModal(false)}
+                className="w-full text-center text-xs font-mono text-[#5e5e5e] hover:text-black py-1.5 uppercase tracking-wider"
+              >
+                I Will Send It on the Page Below
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-[880px] mx-auto px-5 lg:px-8">
-        {/* Banner: Order Confirmed & Order Number */}
-        <div className="bg-white border border-[#E5E5E5] p-8 sm:p-10 mb-8 shadow-xs text-center">
-          <div className="w-16 h-16 bg-emerald-50 text-emerald-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-200">
-            <span className="material-symbols-outlined text-[36px]">check</span>
+        {/* ========================================================================= */}
+        {/* 2. TOP HERO ACTION CARD: 1-CLICK WHATSAPP TO COMPLETE ORDER */}
+        {/* ========================================================================= */}
+        <div className="bg-emerald-50 border-2 border-[#25D366] p-6 sm:p-8 text-center space-y-4 shadow-lg mb-8 relative overflow-hidden">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-400 text-black text-[11px] font-mono font-bold uppercase tracking-wider rounded-full shadow-xs">
+            <span className="material-symbols-outlined text-[16px]">warning</span>
+            <span>Final Mandatory Step • Action Required</span>
           </div>
 
+          <div className="w-16 h-16 bg-[#25D366] text-white rounded-full flex items-center justify-center mx-auto shadow-md ring-4 ring-emerald-200">
+            <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
+            </svg>
+          </div>
+
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-black font-mono tracking-tight">
+              Press the Button Below to Send to WhatsApp
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-800 max-w-xl mx-auto mt-2 font-sans leading-relaxed">
+              <strong className="text-red-700 font-bold uppercase">Attention:</strong> Your order will{' '}
+              <strong className="text-black underline">only be completed and accepted for packing</strong> once you press the button below and send your pre-filled order details & payment screenshot to our official WhatsApp!
+            </p>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            {/* The Primary Big 1-Click WhatsApp Button */}
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setHasSentWhatsApp(true)}
+              className="w-full sm:w-auto px-8 h-14 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-mono uppercase tracking-widest font-bold flex items-center justify-center gap-3 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ring-4 ring-emerald-300"
+            >
+              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
+              </svg>
+              <span>{hasSentWhatsApp ? '✓ WhatsApp Opened (Send Again)' : 'PRESS HERE TO SEND TO WHATSAPP →'}</span>
+            </a>
+
+            {/* Copy Message Alternative */}
+            <button
+              type="button"
+              onClick={handleCopyMessage}
+              className="w-full sm:w-auto px-5 h-14 bg-white border border-[#E5E5E5] hover:border-black text-black text-xs font-mono uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-[16px]">content_copy</span>
+              <span>{copiedMessage ? '✓ Copied All Data' : 'Copy All Text'}</span>
+            </button>
+          </div>
+
+          <p className="text-[11px] font-mono text-[#5e5e5e] pt-1">
+            Receiving Atelier WhatsApp: <strong>+{settings.whatsappNumber}</strong> (AKIA Botanical Atelier)
+          </p>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* 3. ORDER SUMMARY BANNER */}
+        {/* ========================================================================= */}
+        <div className="bg-white border border-[#E5E5E5] p-6 sm:p-8 mb-6 shadow-xs text-center">
           <span className="text-xs uppercase font-mono tracking-widest text-[#5e5e5e] block mb-1">
-            Order Confirmation
+            Order Record
           </span>
-          <h1 className="text-3xl sm:text-4xl text-black font-semibold tracking-tight mb-2 font-mono">
-            Order {order.orderNumber} Confirmed
-          </h1>
-          <p className="text-sm text-[#5e5e5e] max-w-lg mx-auto leading-relaxed">
-            Thank you for supporting small-batch herbal craftsmanship. Your order request has been registered.
+          <h2 className="text-2xl sm:text-3xl text-black font-semibold tracking-tight mb-2 font-mono">
+            Order {order.orderNumber}
+          </h2>
+          <p className="text-xs sm:text-sm text-[#5e5e5e] max-w-lg mx-auto leading-relaxed">
+            Payment for items received. Order acceptance is finalized upon receiving your WhatsApp confirmation.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 font-mono text-xs">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 font-mono text-xs">
             <span className="px-3.5 py-1.5 bg-[#F5F4F2] border border-[#E5E5E5] text-black">
               Order Ref: <strong className="text-[#8B261D]">{order.orderNumber}</strong>
             </span>
             <span className="px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-800">
               Total Products Paid: <strong>₹{order.totalAmount.toLocaleString('en-IN')}</strong>
             </span>
-            <span className="px-3.5 py-1.5 bg-[#F5F4F2] border border-[#E5E5E5] text-black">
-              Status: <strong>READY FOR DISPATCH</strong>
+            <span
+              className={`px-3.5 py-1.5 border font-semibold flex items-center gap-1.5 ${
+                hasSentWhatsApp
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                  : 'bg-amber-100 border-amber-300 text-amber-900 animate-pulse'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${hasSentWhatsApp ? 'bg-emerald-600' : 'bg-amber-600'}`}></span>
+              <span>
+                {hasSentWhatsApp
+                  ? '✓ WhatsApp Submitted • Order In Process'
+                  : '● PENDING: Send to WhatsApp to Complete'}
+              </span>
             </span>
           </div>
         </div>
 
-        {/* Delivery Fee Notice Alert Box */}
+        {/* ========================================================================= */}
+        {/* 4. DELIVERY FEE NOTICE ALERT BOX */}
+        {/* ========================================================================= */}
         <div className="bg-amber-50 border-2 border-amber-400 p-5 sm:p-6 mb-8 shadow-xs">
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0">
@@ -121,13 +245,15 @@ Please verify payment and confirm dispatch!`;
                 Delivery Fee Notice: Charges are Extra Based on Location
               </h3>
               <p className="text-xs sm:text-sm text-amber-900 font-sans leading-relaxed">
-                The amount paid above covers your <strong>handcrafted products only</strong>. Because shipping rates depend on your exact delivery location (PIN code) and package weight, the <strong>delivery fee will be extra</strong> and our team will notify you directly via WhatsApp once your order is prepared, weighed, and ready for dispatch.
+                The amount paid covers your <strong>handcrafted products only</strong>. Because shipping rates depend on your exact delivery location (PIN code) and package weight, the <strong>delivery fee will be extra</strong> and our team will notify you directly via WhatsApp once your order is prepared, weighed, and ready for dispatch.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Complete Order Manifest & Customer Address */}
+        {/* ========================================================================= */}
+        {/* 5. COMPLETE ORDER MANIFEST & CUSTOMER ADDRESS */}
+        {/* ========================================================================= */}
         <div className="bg-white border border-[#E5E5E5] p-6 sm:p-8 space-y-6 mb-8 shadow-xs">
           <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-4">
             <h3 className="text-xs font-mono font-semibold uppercase text-black flex items-center gap-2">
@@ -180,7 +306,7 @@ Please verify payment and confirm dispatch!`;
               <p className="text-[#333] font-mono">Payment Mode: Direct UPI</p>
               <p className="text-emerald-800 font-mono font-semibold pt-1 flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px] text-emerald-600">check_circle</span>
-                <span>Payment Completed</span>
+                <span>Product Payment Submitted</span>
               </p>
             </div>
           </div>
@@ -224,58 +350,29 @@ Please verify payment and confirm dispatch!`;
         </div>
 
         {/* ========================================================================= */}
-        {/* FINAL CALL-TO-ACTION: SINGLE CLICK WHATSAPP SUBMISSION */}
+        {/* 6. BOTTOM REPEATED WHATSAPP CTA */}
         {/* ========================================================================= */}
-        <div className="bg-emerald-50 border-2 border-[#25D366] p-6 sm:p-8 text-center space-y-4 shadow-sm mb-8">
-          <div className="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center mx-auto shadow-xs">
-            <svg className="w-7 h-7 fill-current" viewBox="0 0 24 24">
+        <div className="bg-emerald-50 border-2 border-[#25D366] p-6 text-center space-y-3 mb-8">
+          <p className="text-xs sm:text-sm font-bold text-black font-mono">
+            {hasSentWhatsApp
+              ? '✓ WhatsApp details submitted. You can re-open anytime if needed:'
+              : '⚠️ Did you press the button? Please send to WhatsApp to finish:'}
+          </p>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setHasSentWhatsApp(true)}
+            className="inline-flex items-center justify-center gap-2 px-8 h-12 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-mono uppercase tracking-widest font-bold shadow-md"
+          >
+            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
               <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
             </svg>
-          </div>
-
-          <div>
-            <span className="text-[11px] font-mono uppercase tracking-widest text-emerald-800 font-bold block mb-1">
-              Final Step • 1-Click WhatsApp Submission
-            </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-black font-mono">
-              Send Name, Address & Order to WhatsApp
-            </h2>
-            <p className="text-xs text-[#5e5e5e] max-w-lg mx-auto mt-1 font-sans leading-relaxed">
-              Click the green button below to immediately open WhatsApp with your <strong>Order Number ({order.orderNumber})</strong>, <strong>Customer Name</strong>, <strong>Full Delivery Address</strong>, and items pre-filled, and attach your payment screenshot!
-            </p>
-          </div>
-
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            {/* The 1-Click WhatsApp Button */}
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto px-8 h-14 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-mono uppercase tracking-widest font-bold flex items-center justify-center gap-2.5 shadow-md transition-all hover:scale-[1.01] active:scale-[0.99]"
-            >
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
-              </svg>
-              <span>Send All Data & Screenshot on WhatsApp</span>
-            </a>
-
-            {/* Copy Message Alternative */}
-            <button
-              type="button"
-              onClick={handleCopyMessage}
-              className="w-full sm:w-auto px-5 h-14 bg-white border border-emerald-300 hover:border-black text-black text-xs font-mono uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
-            >
-              <span className="material-symbols-outlined text-[16px]">content_copy</span>
-              <span>{copiedMessage ? '✓ Copied All Data' : 'Copy All Text'}</span>
-            </button>
-          </div>
-
-          <p className="text-[11px] font-mono text-[#5e5e5e] pt-1">
-            Receiving Line: <strong>+{settings.whatsappNumber}</strong> (AKIA Botanical Atelier)
-          </p>
+            <span>{hasSentWhatsApp ? 'Open WhatsApp Conversation Again' : 'Press Here to Complete on WhatsApp'}</span>
+          </a>
         </div>
 
-        {/* Secondary Return Actions */}
+        {/* Secondary Navigation Actions */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#E5E5E5]">
           <button
             type="button"
@@ -294,6 +391,32 @@ Please verify payment and confirm dispatch!`;
           </button>
         </div>
       </div>
+
+      {/* ========================================================================= */}
+      {/* 7. STICKY MOBILE BOTTOM BAR (If WhatsApp Not Yet Sent) */}
+      {/* ========================================================================= */}
+      {!hasSentWhatsApp && (
+        <div className="fixed bottom-0 inset-x-0 z-40 bg-white border-t-2 border-[#25D366] p-3 shadow-2xl flex items-center justify-between gap-3 sm:hidden animate-slide-up">
+          <div className="truncate">
+            <span className="text-[10px] uppercase font-mono text-red-600 font-bold block">
+              ● Action Required
+            </span>
+            <span className="text-xs font-semibold text-black truncate block">
+              Order #{order.orderNumber}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleOpenWhatsApp}
+            className="h-11 px-4 bg-[#25D366] text-white text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0 shadow-md"
+          >
+            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.571 4.181 1.564 5.929l-1.659 6.061 6.223-1.632c1.701.928 3.655 1.455 5.733 1.455 6.627 0 12-5.373 12-12 0-6.628-5.373-12-11.861-12z" />
+            </svg>
+            <span>Send to WhatsApp →</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
