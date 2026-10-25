@@ -1,0 +1,12 @@
+# Cloudflare Pages 301 Redirects & SPA Fallback
+
+# Permanent 301 Redirects
+/shop              /catalogue         301
+/products          /catalogue         301
+/story             /about             301
+/contact-us        /contact           301
+/track             /order-track       301
+/policy            /privacy-policy    301
+
+# SPA History Fallback (enables direct URL loading for all routes)
+/*                 /index.html        200
