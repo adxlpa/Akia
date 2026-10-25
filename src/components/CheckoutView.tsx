@@ -135,7 +135,8 @@ export const CheckoutView: React.FC = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (err: any) {
-      alert(err.message || 'Error creating order');
+      console.error('Checkout creation error:', err);
+      alert('Unable to complete order creation. Please verify your network connection and try again.');
     } finally {
       setIsSubmitting(false);
     }

@@ -63,7 +63,8 @@ export const AdminImageUploader: React.FC<AdminImageUploaderProps> = ({
         setUploadSuccess('Loaded local preview. Connect Supabase in "Supabase Cloud" to host permanently for everyone.');
       }
     } catch (err: any) {
-      setUploadError(err.message || 'Failed to upload image.');
+      console.error('Image upload error:', err);
+      setUploadError('Image processing failed. Please verify the file is a valid image (JPEG, PNG, WebP) under 10MB.');
       readLocalFileFallback(file);
     } finally {
       setIsUploading(false);

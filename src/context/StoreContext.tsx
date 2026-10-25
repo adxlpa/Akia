@@ -540,8 +540,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (err: any) {
       console.error('Supabase synchronization error:', err);
       setSupabaseStatus('error');
-      setSupabaseMessage(`Sync failed: ${err.message || 'Network error'}. Fallback to local data.`);
-      return { success: false, message: err.message || 'Sync failed.' };
+      setSupabaseMessage('Synchronization encountered an issue. Using cached local data safely.');
+      return { success: false, message: 'Cloud synchronization could not be completed.' };
     }
   }, []);
 
@@ -568,25 +568,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // 1. Upsert Categories
       const supabaseCategories = categories.map(mapCategoryToSupabase);
       const { error: catErr } = await client.from('categories').upsert(supabaseCategories);
-      if (catErr) throw new Error(`Failed to push categories: ${catErr.message}`);
+      if (catErr) throw new Error('Categories upsert failed');
 
       // 2. Upsert Products
       const supabaseProducts = products.map(mapProductToSupabase);
       const { error: prodErr } = await client.from('products').upsert(supabaseProducts);
-      if (prodErr) throw new Error(`Failed to push products: ${prodErr.message}`);
+      if (prodErr) throw new Error('Products upsert failed');
 
       // 3. Upsert Settings
       const supabaseSettings = mapSettingsToSupabase(settings);
       const { error: setErr } = await client.from('business_settings').upsert(supabaseSettings);
-      if (setErr) throw new Error(`Failed to push settings: ${setErr.message}`);
+      if (setErr) throw new Error('Settings upsert failed');
 
       setSupabaseStatus('connected');
       setSupabaseMessage('All 16 AKIA products, categories, and settings pushed to Supabase successfully!');
       return { success: true, message: 'Successfully populated Supabase database with all AKIA data!' };
     } catch (err: any) {
+      console.error('Supabase push error:', err);
       setSupabaseStatus('error');
-      setSupabaseMessage(`Push failed: ${err.message}`);
-      return { success: false, message: err.message };
+      setSupabaseMessage('Failed to push data to Supabase. Please check table permissions.');
+      return { success: false, message: 'Data upload to cloud failed.' };
     }
   };
 

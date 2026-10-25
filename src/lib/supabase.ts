@@ -82,6 +82,7 @@ export async function testSupabaseConnection(): Promise<{ success: boolean; mess
   try {
     const { error } = await client.from('categories').select('id').limit(1);
     if (error) {
+      console.error('Supabase query error:', error);
       if (error.code === '42P01') {
         return {
           success: false,
@@ -90,12 +91,13 @@ export async function testSupabaseConnection(): Promise<{ success: boolean; mess
       }
       return {
         success: false,
-        message: `Supabase error: ${error.message} (Code: ${error.code})`,
+        message: 'Database query failed. Please verify table permissions in Supabase.',
       };
     }
     return { success: true, message: 'Successfully connected to Supabase database!' };
   } catch (err: any) {
-    return { success: false, message: `Connection failed: ${err.message || 'Unknown network error'}` };
+    console.error('Supabase connection error:', err);
+    return { success: false, message: 'Connection to Supabase failed. Please check network connectivity and credentials.' };
   }
 }
 
@@ -380,9 +382,10 @@ export async function uploadImageToSupabase(
       publicUrl: publicUrlData.publicUrl,
     };
   } catch (err: any) {
+    console.error('Storage upload error:', err);
     return {
       success: false,
-      error: err.message || 'Unexpected network error during image upload.',
+      error: 'Unexpected error occurred during image upload. Please verify the image file format and size.',
     };
   }
 }
@@ -398,16 +401,17 @@ export async function createStorageBucketIfMissing(): Promise<{ success: boolean
       fileSizeLimit: 10485760,
     });
     if (error) {
-      return { success: false, message: error.message };
+      console.error('Storage bucket create error:', error);
+      return { success: false, message: 'Failed to create storage bucket. Please check permissions.' };
     }
     return { success: true, message: 'Bucket "product-images" created successfully!' };
   } catch (err: any) {
-    return { success: false, message: err.message || 'Failed to create bucket.' };
+    console.error('Bucket creation error:', err);
+    return { success: false, message: 'Unable to initialize storage bucket.' };
   }
 }
 
 export async function testSupabaseStorage(): Promise<{ success: boolean; message: string }> {
-
   const client = getSupabaseClient();
   if (!client) {
     return { success: false, message: 'Supabase credentials not configured.' };
@@ -415,9 +419,10 @@ export async function testSupabaseStorage(): Promise<{ success: boolean; message
   try {
     const { data, error } = await client.storage.getBucket('product-images');
     if (error) {
+      console.error('Storage bucket lookup error:', error);
       return {
         success: false,
-        message: `Bucket 'product-images' not found (${error.message}). Run the storage setup SQL from supabase_schema.sql.`,
+        message: 'Bucket "product-images" is not accessible. Please check storage setup in Supabase.',
       };
     }
     return {
@@ -425,7 +430,8 @@ export async function testSupabaseStorage(): Promise<{ success: boolean; message
       message: `Storage bucket 'product-images' is ready! Public access: ${data.public ? 'YES (Active)' : 'NO (Private - please make public)'}`,
     };
   } catch (err: any) {
-    return { success: false, message: `Storage bucket check failed: ${err.message}` };
+    console.error('Storage check error:', err);
+    return { success: false, message: 'Storage verification encountered an unexpected error.' };
   }
 }
 

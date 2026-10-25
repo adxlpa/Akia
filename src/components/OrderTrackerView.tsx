@@ -70,7 +70,8 @@ export const OrderTrackerView: React.FC = () => {
         `No consignment found matching Order #${cleanOrder} and phone ending with ${cleanPhone.slice(-4)}. Please check your details.`
       );
     } catch (err: any) {
-      setError(err.message || 'Lookup failed. Please verify your order information.');
+      console.error('Order lookup error:', err);
+      setError('Unable to retrieve consignment details at this time. Please check your information and try again.');
     } finally {
       setIsSearching(false);
     }

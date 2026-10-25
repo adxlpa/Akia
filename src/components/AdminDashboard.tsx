@@ -303,8 +303,9 @@ export const AdminDashboard: React.FC = () => {
         type: res.success ? 'success' : 'error',
       });
     } catch (err: any) {
+      console.error('Supabase config error:', err);
       setSupabaseActionMsg({
-        text: err.message || 'Failed to update Supabase configuration.',
+        text: 'Failed to update configuration. Please verify credentials.',
         type: 'error',
       });
     } finally {
@@ -325,8 +326,9 @@ export const AdminDashboard: React.FC = () => {
         type: res.success ? 'success' : 'error',
       });
     } catch (err: any) {
+      console.error('Supabase push error:', err);
       setSupabaseActionMsg({
-        text: err.message || 'Failed to push data to Supabase.',
+        text: 'Failed to push data to cloud storage. Please check connection.',
         type: 'error',
       });
     } finally {
@@ -344,8 +346,9 @@ export const AdminDashboard: React.FC = () => {
         type: res.success ? 'success' : 'error',
       });
     } catch (err: any) {
+      console.error('Storage test error:', err);
       setStorageTestResult({
-        text: err.message || 'Storage bucket test failed.',
+        text: 'Storage bucket verification failed. Please verify storage permissions.',
         type: 'error',
       });
     } finally {
