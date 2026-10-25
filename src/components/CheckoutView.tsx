@@ -150,11 +150,26 @@ export const CheckoutView: React.FC = () => {
       <div className="max-w-[1200px] mx-auto px-5 lg:px-12">
         {/* Step Header */}
         <div className="border-b border-[#E5E5E5] pb-6 mb-8 pt-4">
-          <div className="flex items-center gap-2 text-xs text-[#5e5e5e] font-mono uppercase mb-2">
-            <span>Checkout</span>
-            <span>/</span>
-            <span className="text-black">1. Delivery Address & Information</span>
-          </div>
+          <nav aria-label="Breadcrumb" className="mb-2">
+            <ol className="flex items-center gap-2 text-xs text-[#5e5e5e] font-mono uppercase">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('catalogue');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-black transition-colors"
+                >
+                  Catalogue
+                </button>
+              </li>
+              <li>/</li>
+              <li className="text-black font-semibold" aria-current="page">
+                1. Delivery Address & Information
+              </li>
+            </ol>
+          </nav>
           <h1 className="text-3xl text-black font-normal tracking-tight">
             Consignment Dispatch Details
           </h1>

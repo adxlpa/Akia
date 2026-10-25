@@ -68,7 +68,12 @@ export const HeroSection: React.FC = () => {
                 <div className="relative aspect-square w-full flex items-center justify-center p-2 mb-4 overflow-hidden bg-white border border-[#EBEBEB]">
                   <img
                     src={featuredSoap.imageUrl}
-                    alt={featuredSoap.name}
+                    alt={`${featuredSoap.name} - Handmade Ayurvedic Botanical Soap`}
+                    width={400}
+                    height={400}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-2 left-2 bg-black/80 text-white text-[10px] uppercase font-mono px-2 py-0.5 tracking-wider">
@@ -111,7 +116,11 @@ export const HeroSection: React.FC = () => {
                 <div className="relative aspect-square w-full flex items-center justify-center p-2 mb-4 overflow-hidden bg-white border border-[#EBEBEB]">
                   <img
                     src={redSandal.imageUrl}
-                    alt={redSandal.name}
+                    alt={`${redSandal.name} - Red Sandalwood Soap`}
+                    width={400}
+                    height={400}
+                    loading="eager"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-2 left-2 bg-[#8B261D] text-white text-[10px] uppercase font-mono px-2 py-0.5 tracking-wider">
@@ -154,7 +163,11 @@ export const HeroSection: React.FC = () => {
                 <div className="relative aspect-square w-full flex items-center justify-center p-2 mb-4 overflow-hidden bg-white border border-[#EBEBEB]">
                   <img
                     src={hairOil.imageUrl}
-                    alt={hairOil.name}
+                    alt={`${hairOil.name} - Ayurvedic Hair Oil`}
+                    width={400}
+                    height={400}
+                    loading="eager"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-2 left-2 bg-black/80 text-white text-[10px] uppercase font-mono px-2 py-0.5 tracking-wider">

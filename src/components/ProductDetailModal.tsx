@@ -51,7 +51,11 @@ export const ProductDetailModal: React.FC = () => {
             )}
             <img
               src={product.imageUrl}
-              alt={product.name}
+              alt={`${product.name} - Handcrafted Ayurvedic ${product.categoryName}`}
+              width={400}
+              height={400}
+              loading="lazy"
+              decoding="async"
               className={`max-h-[380px] w-full object-contain ${
                 isOutOfStock ? 'grayscale opacity-60' : ''
               }`}

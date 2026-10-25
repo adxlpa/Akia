@@ -114,16 +114,20 @@ export const ReviewsView: React.FC = () => {
 
   return (
     <div className="pt-28 pb-20 bg-[#f9f9f9]">
-      {/* Breadcrumb */}
-      <div className="max-w-[1440px] mx-auto px-5 lg:px-20 mb-8">
-        <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#747878]">
-          <button onClick={() => setActiveView('home')} className="hover:text-black transition-colors">
-            Home
-          </button>
-          <span>/</span>
-          <span className="text-black font-semibold">Customer Reviews & Testimonials</span>
-        </div>
-      </div>
+      {/* Accessible Breadcrumb */}
+      <nav aria-label="Breadcrumb" className="max-w-[1440px] mx-auto px-5 lg:px-20 mb-8">
+        <ol className="flex items-center gap-2 text-xs font-mono uppercase text-[#747878]">
+          <li>
+            <button onClick={() => setActiveView('home')} className="hover:text-black transition-colors">
+              Home
+            </button>
+          </li>
+          <li>/</li>
+          <li className="text-black font-semibold" aria-current="page">
+            Customer Reviews & Testimonials
+          </li>
+        </ol>
+      </nav>
 
       {/* Hero Score Banner */}
       <section className="max-w-[1440px] mx-auto px-5 lg:px-20 mb-12">

@@ -46,6 +46,60 @@ import {
   mapAuditLogFromSupabase,
   mapAuditLogToSupabase,
 } from '../lib/supabase';
+import { updatePageSEO } from '../utils/seo';
+import { initGA, trackPageView } from '../utils/analytics';
+
+export type AppView =
+  | 'home'
+  | 'catalogue'
+  | 'about'
+  | 'reviews'
+  | 'contact'
+  | 'checkout'
+  | 'payment'
+  | 'order-confirmation'
+  | 'admin'
+  | 'order-track'
+  | 'privacy-policy'
+  | 'not-found';
+
+export const VIEW_TO_PATH: Record<AppView, string> = {
+  home: '/',
+  catalogue: '/catalogue',
+  about: '/about',
+  reviews: '/reviews',
+  contact: '/contact',
+  checkout: '/checkout',
+  payment: '/payment',
+  'order-confirmation': '/order-confirmation',
+  'order-track': '/order-track',
+  admin: '/admin',
+  'privacy-policy': '/privacy-policy',
+  'not-found': '/404',
+};
+
+export const PATH_TO_VIEW: Record<string, AppView> = {
+  '/': 'home',
+  '/catalogue': 'catalogue',
+  '/catalog': 'catalogue',
+  '/shop': 'catalogue',
+  '/products': 'catalogue',
+  '/about': 'about',
+  '/story': 'about',
+  '/reviews': 'reviews',
+  '/testimonials': 'reviews',
+  '/contact': 'contact',
+  '/contact-us': 'contact',
+  '/checkout': 'checkout',
+  '/payment': 'payment',
+  '/order-confirmation': 'order-confirmation',
+  '/order-track': 'order-track',
+  '/track': 'order-track',
+  '/admin': 'admin',
+  '/privacy-policy': 'privacy-policy',
+  '/privacy': 'privacy-policy',
+  '/404': 'not-found',
+};
 
 interface StoreContextType {
   products: Product[];
@@ -55,8 +109,8 @@ interface StoreContextType {
   cart: CartItem[];
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
-  activeView: 'home' | 'catalogue' | 'about' | 'reviews' | 'contact' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track';
-  setActiveView: (view: 'home' | 'catalogue' | 'about' | 'reviews' | 'contact' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track') => void;
+  activeView: AppView;
+  setActiveView: (view: AppView) => void;
   selectedCategoryFilter: string | null;
   setSelectedCategoryFilter: (catId: string | null) => void;
   searchModalOpen: boolean;
@@ -268,7 +322,48 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [supabaseMessage, setSupabaseMessage] = useState<string>('Supabase not configured');
 
   const [cartOpen, setCartOpen] = useState(false);
-  const [activeView, setActiveView] = useState<'home' | 'catalogue' | 'about' | 'reviews' | 'contact' | 'checkout' | 'payment' | 'order-confirmation' | 'admin' | 'order-track'>('home');
+  const [activeView, setActiveViewState] = useState<AppView>(() => {
+    if (typeof window === 'undefined') return 'home';
+    const path = window.location.pathname.replace(/\/$/, '') || '/';
+    return PATH_TO_VIEW[path] || (path === '' ? 'home' : 'not-found');
+  });
+
+  const setActiveView = useCallback((view: AppView) => {
+    setActiveViewState(view);
+    const targetPath = VIEW_TO_PATH[view] || '/';
+    if (typeof window !== 'undefined' && window.location.pathname !== targetPath) {
+      window.history.pushState({ view }, '', targetPath);
+    }
+    updatePageSEO(view);
+    trackPageView(targetPath);
+  }, []);
+
+  // Sync browser back/forward buttons and initial SEO / Analytics
+  useEffect(() => {
+    initGA();
+
+    const handlePopState = () => {
+      if (typeof window === 'undefined') return;
+      const path = window.location.pathname.replace(/\/$/, '') || '/';
+      const view = PATH_TO_VIEW[path] || (path === '' ? 'home' : 'not-found');
+      setActiveViewState(view);
+      updatePageSEO(view);
+      trackPageView(path);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    // Initial SEO update for current page
+    const initialPath = typeof window !== 'undefined' ? (window.location.pathname.replace(/\/$/, '') || '/') : '/';
+    const initialView = PATH_TO_VIEW[initialPath] || (initialPath === '' ? 'home' : 'not-found');
+    updatePageSEO(initialView);
+    trackPageView(initialPath);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | null>(null);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

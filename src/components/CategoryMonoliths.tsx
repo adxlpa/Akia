@@ -68,7 +68,11 @@ export const CategoryMonoliths: React.FC = () => {
             >
               <img
                 src={cat.image}
-                alt={cat.title}
+                alt={`${cat.title} Category - Handcrafted Ayurvedic Formulations`}
+                width={360}
+                height={480}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-out"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"></div>

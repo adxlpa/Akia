@@ -52,18 +52,22 @@ export const AboutView: React.FC = () => {
   return (
     <div className="pt-28 pb-20 bg-[#f9f9f9]">
       {/* Breadcrumb Navigation */}
-      <div className="max-w-[1440px] mx-auto px-5 lg:px-20 mb-8">
-        <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#747878]">
-          <button
-            onClick={() => setActiveView('home')}
-            className="hover:text-black transition-colors"
-          >
-            Home
-          </button>
-          <span>/</span>
-          <span className="text-black font-semibold">Our Story & Botanical Heritage</span>
-        </div>
-      </div>
+      <nav aria-label="Breadcrumb" className="max-w-[1440px] mx-auto px-5 lg:px-20 mb-8">
+        <ol className="flex items-center gap-2 text-xs font-mono uppercase text-[#747878]">
+          <li>
+            <button
+              onClick={() => setActiveView('home')}
+              className="hover:text-black transition-colors"
+            >
+              Home
+            </button>
+          </li>
+          <li>/</li>
+          <li className="text-black font-semibold" aria-current="page">
+            Our Story & Botanical Heritage
+          </li>
+        </ol>
+      </nav>
 
       {/* Hero Narrative Section */}
       <section className="max-w-[1440px] mx-auto px-5 lg:px-20 mb-16 lg:mb-24">
@@ -104,7 +108,11 @@ export const AboutView: React.FC = () => {
             <div className="relative aspect-[4/5] bg-white border border-[#E5E5E5] p-4 shadow-sm overflow-hidden flex items-center justify-center">
               <img
                 src="/images/products/thulasi-soap.jpg"
-                alt="AKIA Artisan Soap"
+                alt="AKIA Artisan Cold-Cured Herbal Soap in Kerala Atelier"
+                width={450}
+                height={550}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
               <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm border border-[#E5E5E5] p-4 text-left">
@@ -203,7 +211,11 @@ export const AboutView: React.FC = () => {
                 <div className="w-full h-44 bg-[#F5F4F2] overflow-hidden border border-[#E5E5E5] mb-4">
                   <img
                     src={herb.image}
-                    alt={herb.name}
+                    alt={`${herb.name} - Botanical Active for ${herb.role}`}
+                    width={280}
+                    height={176}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-contain p-2 hover:scale-105 transition-transform duration-300"
                   />
                 </div>

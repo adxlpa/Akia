@@ -215,6 +215,18 @@ export const Footer: React.FC = () => {
                 <span className="text-[#5e5e5e]">Free Shipping above ₹1,000</span>
               </li>
               <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('privacy-policy');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-black transition-colors text-left font-medium text-[#5e5e5e]"
+                >
+                  Privacy Policy & Data Security
+                </button>
+              </li>
+              <li>
                 {/* Discrete Staff / Admin Link */}
                 <button
                   type="button"
@@ -267,8 +279,19 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="mt-16 pt-6 border-t border-[#E5E5E5] flex flex-col md:flex-row items-center justify-between gap-4 text-[12px] text-[#5e5e5e]">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <p>© 2026 AKIA Hand Made & Herbal Care. All rights reserved.</p>
+            <span className="text-[#E5E5E5] hidden sm:inline">|</span>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('privacy-policy');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-black underline underline-offset-2 transition-colors"
+            >
+              Privacy Policy
+            </button>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 tracking-wider uppercase font-mono text-[11px] flex-wrap justify-center">
             <span className="text-[#8B261D] font-medium">Direct UPI</span>

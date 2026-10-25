@@ -82,11 +82,26 @@ export const OrderTrackerView: React.FC = () => {
       <div className="max-w-[900px] mx-auto px-5 lg:px-8">
         {/* Header */}
         <div className="border-b border-[#E5E5E5] pb-6 mb-8 pt-4">
-          <div className="flex items-center gap-2 text-xs text-[#5e5e5e] font-mono uppercase mb-2">
-            <span>Concierge</span>
-            <span>/</span>
-            <span className="text-black">Track Consignment</span>
-          </div>
+          <nav aria-label="Breadcrumb" className="mb-2">
+            <ol className="flex items-center gap-2 text-xs text-[#5e5e5e] font-mono uppercase">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('home');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-black transition-colors"
+                >
+                  Home
+                </button>
+              </li>
+              <li>/</li>
+              <li className="text-black font-semibold" aria-current="page">
+                Track Consignment
+              </li>
+            </ol>
+          </nav>
           <h1 className="text-3xl text-black font-normal tracking-tight">
             Order & Dispatch Lookup
           </h1>

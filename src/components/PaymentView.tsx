@@ -56,13 +56,28 @@ export const PaymentView: React.FC = () => {
       <div className="max-w-[1040px] mx-auto px-5 lg:px-8">
         {/* Step Header */}
         <div className="border-b border-[#E5E5E5] pb-6 mb-8 pt-4">
-          <div className="flex items-center gap-2 text-xs text-[#5e5e5e] font-mono uppercase mb-2">
-            <span>Checkout</span>
-            <span>/</span>
-            <span>Order {order.orderNumber}</span>
-            <span>/</span>
-            <span className="text-black font-semibold">2. UPI Payment</span>
-          </div>
+          <nav aria-label="Breadcrumb" className="mb-2">
+            <ol className="flex items-center gap-2 text-xs text-[#5e5e5e] font-mono uppercase">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('checkout');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-black transition-colors"
+                >
+                  Checkout
+                </button>
+              </li>
+              <li>/</li>
+              <li>Order {order.orderNumber}</li>
+              <li>/</li>
+              <li className="text-black font-semibold" aria-current="page">
+                2. UPI Payment
+              </li>
+            </ol>
+          </nav>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <h1 className="text-3xl text-black font-normal tracking-tight">

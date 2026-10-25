@@ -26,6 +26,8 @@ import { AdminLoginGate } from './components/AdminLoginGate';
 import { AboutView } from './components/AboutView';
 import { ReviewsView } from './components/ReviewsView';
 import { ContactView } from './components/ContactView';
+import { PrivacyPolicyView } from './components/PrivacyPolicyView';
+import { NotFoundView } from './components/NotFoundView';
 
 const MainContent: React.FC = () => {
   const { activeView, isAdminAuthenticated } = useStore();
@@ -50,11 +52,13 @@ const MainContent: React.FC = () => {
         {activeView === 'about' && <AboutView />}
         {activeView === 'reviews' && <ReviewsView />}
         {activeView === 'contact' && <ContactView />}
+        {activeView === 'privacy-policy' && <PrivacyPolicyView />}
         {activeView === 'checkout' && <CheckoutView />}
         {activeView === 'payment' && <PaymentView />}
         {activeView === 'order-confirmation' && <OrderConfirmationView />}
         {activeView === 'order-track' && <OrderTrackerView />}
         {activeView === 'admin' && (isAdminAuthenticated ? <AdminDashboard /> : <AdminLoginGate />)}
+        {activeView === 'not-found' && <NotFoundView />}
       </main>
 
       <Footer />

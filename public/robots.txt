@@ -1,0 +1,18 @@
+# robots.txt for AKIA Hand Made Soaps & Herbal Botanicals (https://akia.in)
+User-agent: *
+Allow: /
+Allow: /catalogue
+Allow: /about
+Allow: /reviews
+Allow: /contact
+Allow: /privacy-policy
+
+# Administrative & Checkout Disallows (protect private flows from indexing)
+Disallow: /admin
+Disallow: /checkout
+Disallow: /payment
+Disallow: /order-confirmation
+Disallow: /404
+
+# Canonical Sitemap Location
+Sitemap: https://akia.in/sitemap.xml

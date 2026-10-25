@@ -10,6 +10,7 @@ export const CatalogueView: React.FC = () => {
     setSelectedCategoryFilter,
     addToCart,
     setActiveProductModal,
+    setActiveView,
   } = useStore();
 
   const [search, setSearch] = useState('');
@@ -55,11 +56,26 @@ export const CatalogueView: React.FC = () => {
       <div className="max-w-[1440px] mx-auto px-5 lg:px-20">
         {/* Breadcrumb & Section Header */}
         <div className="border-b border-[#E5E5E5] pb-6 mb-8 pt-4">
-          <div className="flex items-center gap-2 text-xs text-[#5e5e5e] font-mono uppercase mb-2">
-            <span>Home</span>
-            <span>/</span>
-            <span className="text-black">Formulations Catalogue</span>
-          </div>
+          <nav aria-label="Breadcrumb" className="mb-2">
+            <ol className="flex items-center gap-2 text-xs text-[#5e5e5e] font-mono uppercase">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('home');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-black transition-colors"
+                >
+                  Home
+                </button>
+              </li>
+              <li>/</li>
+              <li className="text-black font-semibold" aria-current="page">
+                Formulations Catalogue
+              </li>
+            </ol>
+          </nav>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl text-black font-normal tracking-tight">
@@ -230,7 +246,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect, onAddToCar
 
         <img
           src={product.imageUrl}
-          alt={product.name}
+          alt={`${product.name} - Handcrafted Ayurvedic ${product.categoryName}`}
+          width={300}
+          height={300}
+          loading="lazy"
+          decoding="async"
           className={`w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-105 ${
             isOutOfStock ? 'opacity-50 grayscale' : ''
           }`}

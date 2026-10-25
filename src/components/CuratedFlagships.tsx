@@ -124,7 +124,11 @@ export const CuratedFlagships: React.FC = () => {
                     )}
                     <img
                       src={product.imageUrl}
-                      alt={product.name}
+                      alt={`${product.name} - ${product.categoryName}`}
+                      width={400}
+                      height={400}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                     />
                   </div>

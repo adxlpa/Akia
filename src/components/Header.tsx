@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useStore } from '../context/StoreContext';
+import { useStore, AppView } from '../context/StoreContext';
 
 export const Header: React.FC = () => {
   const {
@@ -15,7 +15,7 @@ export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavClick = (
-    view: 'home' | 'catalogue' | 'about' | 'reviews' | 'contact' | 'order-track' | 'admin',
+    view: AppView,
     catId: string | null = null
   ) => {
     setSelectedCategoryFilter(catId);
