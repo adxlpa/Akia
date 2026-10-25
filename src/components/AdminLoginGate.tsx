@@ -179,30 +179,8 @@ export const AdminLoginGate: React.FC = () => {
           </button>
         </form>
 
-        {/* Security Feature Highlights */}
-        <div className="mt-8 pt-6 border-t border-[#E5E5E5] space-y-2 text-[11px] text-[#5e5e5e] font-mono">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span>Account lockout protection (5 attempts maximum)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span>Automatic logout after 30 minutes of inactivity</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span>Administrative sessions are securely logged</span>
-          </div>
-        </div>
-
-        {/* Security Shield Notice */}
-        <div className="mt-4 p-3 bg-[#F9F9F9] border border-[#E5E5E5] text-[11px] text-[#5e5e5e] text-center font-mono">
-          <span>Protected Staff Area • Access Restricted to Authorized Personnel</span>
-        </div>
-
-
         {/* Return Button */}
-        <div className="mt-6 text-center">
+        <div className="mt-8 pt-4 border-t border-[#E5E5E5] text-center">
           <button
             type="button"
             onClick={() => setActiveView('home')}
