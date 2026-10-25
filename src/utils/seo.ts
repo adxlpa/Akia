@@ -20,7 +20,7 @@ export function getBaseUrl(): string {
   if (typeof window !== 'undefined' && window.location?.origin) {
     return window.location.origin;
   }
-  return 'https://akia.in';
+  return 'https://akiapremium.in';
 }
 
 const BASE_URL = getBaseUrl();
