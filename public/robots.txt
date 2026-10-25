@@ -6,6 +6,7 @@ Allow: /about
 Allow: /reviews
 Allow: /contact
 Allow: /privacy-policy
+Allow: /llms.txt
 
 # Administrative & Checkout Disallows (protect private flows from indexing)
 Disallow: /admin
