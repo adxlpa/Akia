@@ -278,7 +278,7 @@ export const AdminDashboard: React.FC = () => {
     try {
       const res = await changeAdminCredentials(credCurrentPass, credNewPass, credNewUser || undefined);
       if (res.success) {
-        setCredMsg({ text: 'Admin security credentials updated successfully with salted SHA-256 hash.', type: 'success' });
+        setCredMsg({ text: 'Admin security credentials updated successfully.', type: 'success' });
         setCredCurrentPass('');
         setCredNewPass('');
         setCredConfirmPass('');
@@ -399,7 +399,7 @@ export const AdminDashboard: React.FC = () => {
               </h1>
               {adminSession && (
                 <p className="text-[11px] font-mono text-[#5e5e5e] mt-0.5">
-                  Logged in as <span className="text-black font-semibold">{adminSession.username}</span> • Token active with SHA-256 encryption
+                  Logged in as <span className="text-black font-semibold">{adminSession.username}</span> • Active Staff Session
                 </p>
               )}
             </div>
@@ -1204,7 +1204,8 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Categories Table */}
             <div className="bg-white border border-[#E5E5E5] overflow-hidden">
-              <table className="w-full text-left text-xs font-mono">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs font-mono">
                 <thead>
                   <tr className="border-b border-[#E5E5E5] bg-[#F5F4F2] text-[#5e5e5e] uppercase">
                     <th className="p-3">Order</th>
@@ -1277,6 +1278,7 @@ export const AdminDashboard: React.FC = () => {
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
 
             {/* Modal for Add / Edit Category */}
@@ -1557,10 +1559,10 @@ export const AdminDashboard: React.FC = () => {
               <div className="bg-white p-5 border border-emerald-200 bg-emerald-50/30">
                 <div className="flex items-center gap-2 text-emerald-800 text-xs font-semibold uppercase mb-1">
                   <span className="material-symbols-outlined text-[18px]">lock</span>
-                  <span>SHA-256 Hashing</span>
+                  <span>Password Encryption</span>
                 </div>
                 <p className="text-[12px] text-[#5e5e5e] font-sans">
-                  Salted cryptographic digest protects against rainbow table and offline password attacks.
+                  High-grade one-way encryption protects all administrative credentials.
                 </p>
                 <span className="inline-block mt-3 text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 font-mono">
                   ACTIVE
@@ -1570,10 +1572,10 @@ export const AdminDashboard: React.FC = () => {
               <div className="bg-white p-5 border border-blue-200 bg-blue-50/30">
                 <div className="flex items-center gap-2 text-blue-800 text-xs font-semibold uppercase mb-1">
                   <span className="material-symbols-outlined text-[18px]">timer</span>
-                  <span>Brute-Force Lockout</span>
+                  <span>Account Lockout Shield</span>
                 </div>
                 <p className="text-[12px] text-[#5e5e5e] font-sans">
-                  Strict 5-minute lockdown automatically triggered after 5 failed password attempts.
+                  Temporary 5-minute cooldown automatically activated after 5 failed login attempts.
                 </p>
                 <span className="inline-block mt-3 text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 font-mono">
                   ACTIVE
@@ -2020,7 +2022,7 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="p-2.5 bg-[#f9f9f9] border border-[#E5E5E5] col-span-2">
                       <span className="font-bold text-black block">security_audit_logs</span>
-                      <span className="text-[#747878]">SHA-256 access & brute-force audit logs</span>
+                      <span className="text-[#747878]">Administrative security and activity audit logs</span>
                     </div>
                     <div className="p-2.5 bg-emerald-50 border border-emerald-200 col-span-2">
                       <span className="font-bold text-emerald-900 block flex items-center gap-1">

@@ -268,6 +268,16 @@ export const Header: React.FC = () => {
                 <span>06. Track Consignment</span>
                 <span className="material-symbols-outlined text-[16px]">chevron_right</span>
               </button>
+
+              <button
+                onClick={() => handleNavClick('privacy-policy')}
+                className={`w-full py-2.5 text-left border-b border-[#F5F4F2] flex items-center justify-between ${
+                  activeView === 'privacy-policy' ? 'text-[#8B261D] font-bold' : 'text-black'
+                }`}
+              >
+                <span>07. Privacy Policy</span>
+                <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+              </button>
             </div>
 
             {/* Quick Category Badges */}

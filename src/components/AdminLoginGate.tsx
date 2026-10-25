@@ -67,8 +67,8 @@ export const AdminLoginGate: React.FC = () => {
             Staff & Administrative Gateway
           </p>
           <div className="flex items-center justify-center gap-2 mt-3 text-[11px] text-[#2e7d32] font-mono bg-emerald-50 py-1 px-3 border border-emerald-200">
-            <span className="material-symbols-outlined text-[14px]">verified_user</span>
-            <span>SHA-256 Cryptographic Shield Active</span>
+            <span className="material-symbols-outlined text-[14px]">lock</span>
+            <span>Authorized Personnel Access</span>
           </div>
         </div>
 
@@ -168,12 +168,12 @@ export const AdminLoginGate: React.FC = () => {
             {isLoading ? (
               <>
                 <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                <span>Cryptographic Verification...</span>
+                <span>Verifying Credentials...</span>
               </>
             ) : (
               <>
                 <span className="material-symbols-outlined text-[18px]">key</span>
-                <span>Authenticate Session</span>
+                <span>Sign In to Admin</span>
               </>
             )}
           </button>
@@ -183,15 +183,15 @@ export const AdminLoginGate: React.FC = () => {
         <div className="mt-8 pt-6 border-t border-[#E5E5E5] space-y-2 text-[11px] text-[#5e5e5e] font-mono">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span>Brute-force lockout enabled (5 attempts maximum)</span>
+            <span>Account lockout protection (5 attempts maximum)</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span>30-minute idle inactivity auto-revocation</span>
+            <span>Automatic logout after 30 minutes of inactivity</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span>Full audit log tracking for all access events</span>
+            <span>Administrative sessions are securely logged</span>
           </div>
         </div>
 

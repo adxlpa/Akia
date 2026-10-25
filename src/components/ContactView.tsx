@@ -500,7 +500,7 @@ export const ContactView: React.FC = () => {
 
               <div className="text-xs text-[#5e5e5e] font-mono flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px] text-emerald-700">lock</span>
-                <span>Protected with client rate-limiting & anti-bot traps</span>
+                <span>Your message is delivered securely to our atelier team</span>
               </div>
             </div>
           </form>

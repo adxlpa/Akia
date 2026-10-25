@@ -50,17 +50,17 @@ export const AdminImageUploader: React.FC<AdminImageUploaderProps> = ({
         const result = await uploadImageToSupabase(file, folder);
         if (result.success && result.publicUrl) {
           onChange(result.publicUrl);
-          setUploadSuccess('Uploaded to Supabase CDN! Live immediately for all visitors.');
+          setUploadSuccess('Image uploaded successfully! Live immediately for all visitors.');
           setShowManualUrl(false);
         } else {
           // Provide actionable error and fallback to local preview
-          setUploadError(result.error || 'Upload to Supabase Storage failed.');
+          setUploadError(result.error || 'Upload to storage failed.');
           readLocalFileFallback(file);
         }
       } else {
-        // Fallback to local Data URL when Supabase is not yet configured
+        // Fallback to local Data URL when cloud backend is not yet configured
         readLocalFileFallback(file);
-        setUploadSuccess('Loaded local preview. Connect Supabase in "Supabase Cloud" to host permanently for everyone.');
+        setUploadSuccess('Image loaded in local preview.');
       }
     } catch (err: any) {
       console.error('Image upload error:', err);
@@ -158,7 +158,7 @@ export const AdminImageUploader: React.FC<AdminImageUploaderProps> = ({
                 {isSupabaseHosted && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-mono font-medium border border-emerald-200">
                     <span className="material-symbols-outlined text-[12px]">cloud_done</span>
-                    Supabase CDN (Public to Everyone)
+                    Cloud Hosted (Live for visitors)
                   </span>
                 )}
                 {isLocalAsset && (
@@ -170,7 +170,7 @@ export const AdminImageUploader: React.FC<AdminImageUploaderProps> = ({
                 {isDataUrl && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-800 text-[10px] font-mono border border-amber-200">
                     <span className="material-symbols-outlined text-[12px]">schedule</span>
-                    Local Preview (Sync to Supabase Storage recommended)
+                    Local Preview
                   </span>
                 )}
                 {!isSupabaseHosted && !isLocalAsset && !isDataUrl && (
@@ -229,10 +229,10 @@ export const AdminImageUploader: React.FC<AdminImageUploaderProps> = ({
                   progress_activity
                 </span>
                 <span className="text-xs font-mono uppercase tracking-wider text-black">
-                  Uploading to Supabase CDN...
+                  Uploading Image...
                 </span>
                 <span className="text-[11px] text-[#747878] font-sans">
-                  Deploying to global storage bucket for all website visitors
+                  Processing and saving to storage
                 </span>
               </div>
             ) : (
@@ -244,7 +244,7 @@ export const AdminImageUploader: React.FC<AdminImageUploaderProps> = ({
                   Click to Upload or Drag & Drop Product Photo
                 </div>
                 <p className="text-[11px] font-sans text-[#747878]">
-                  Supports JPG, PNG, WebP up to 10MB • Auto-syncs to Supabase CDN
+                  Supports JPG, PNG, WebP up to 10MB
                 </p>
               </div>
             )}
