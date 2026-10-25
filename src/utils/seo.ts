@@ -13,7 +13,17 @@ export interface PageMetadata {
   breadcrumbs?: Array<{ name: string; path: string }>;
 }
 
-const BASE_URL = 'https://akia.in';
+export function getBaseUrl(): string {
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SITE_URL && import.meta.env.VITE_SITE_URL.trim()) {
+    return import.meta.env.VITE_SITE_URL.trim().replace(/\/$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin;
+  }
+  return 'https://akia.in';
+}
+
+const BASE_URL = getBaseUrl();
 const DEFAULT_IMAGE = `${BASE_URL}/images/logo.png`;
 
 export const METADATA_CONFIG: Record<string, PageMetadata> = {
