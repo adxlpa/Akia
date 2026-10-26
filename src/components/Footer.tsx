@@ -212,9 +212,6 @@ export const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <span className="text-[#5e5e5e]">Free Shipping above ₹1,000</span>
-              </li>
-              <li>
                 <button
                   type="button"
                   onClick={() => {
