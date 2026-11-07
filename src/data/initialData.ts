@@ -1,4 +1,6 @@
-import { Category, Product, BusinessSettings, Order, AdminCredentials } from '../types';
+import { Category, Product, BusinessSettings, Order, AdminCredentials, Review } from '../types';
+
+export const INITIAL_REVIEWS: Review[] = [];
 
 export const INITIAL_SETTINGS: BusinessSettings = {
   businessName: 'AKIA Hand Made & Herbal Care',

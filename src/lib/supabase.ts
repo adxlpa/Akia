@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Product, Category, Order, BusinessSettings, SecurityAuditLog } from '../types';
+import { Product, Category, Order, BusinessSettings, SecurityAuditLog, Review } from '../types';
 
 // Environment variables or localStorage override for dynamic Admin UI config
 const ENV_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
@@ -434,4 +434,39 @@ export async function testSupabaseStorage(): Promise<{ success: boolean; message
     return { success: false, message: 'Storage verification encountered an unexpected error.' };
   }
 }
+
+export function mapReviewFromSupabase(row: any): Review {
+  return {
+    id: row.id,
+    author: row.author,
+    location: row.location || '',
+    rating: Number(row.rating || 5),
+    date: row.date || '',
+    category: row.category || 'soaps',
+    productName: row.product_name || '',
+    headline: row.headline || '',
+    content: row.content || '',
+    isVerified: row.is_verified ?? true,
+    createdAt: row.created_at || new Date().toISOString(),
+    updatedAt: row.updated_at || new Date().toISOString(),
+  };
+}
+
+export function mapReviewToSupabase(rev: Review): any {
+  return {
+    id: rev.id,
+    author: rev.author,
+    location: rev.location,
+    rating: rev.rating,
+    date: rev.date,
+    category: rev.category,
+    product_name: rev.productName,
+    headline: rev.headline,
+    content: rev.content,
+    is_verified: rev.isVerified ?? true,
+    created_at: rev.createdAt,
+    updated_at: rev.updatedAt,
+  };
+}
+
 

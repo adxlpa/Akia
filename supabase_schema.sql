@@ -90,6 +90,22 @@ CREATE TABLE IF NOT EXISTS public.security_audit_logs (
     details TEXT
 );
 
+-- 7. Create Customer Reviews Table
+CREATE TABLE IF NOT EXISTS public.reviews (
+    id TEXT PRIMARY KEY,
+    author TEXT NOT NULL,
+    location TEXT,
+    rating INTEGER NOT NULL DEFAULT 5,
+    date TEXT,
+    category TEXT,
+    product_name TEXT,
+    headline TEXT NOT NULL,
+    content TEXT NOT NULL,
+    is_verified BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- -----------------------------------------------------------------------------
 -- ROW LEVEL SECURITY (RLS) POLICIES - SECURE LEAST-PRIVILEGE CONFIGURATION
 -- (Idempotent: drops previous policy versions so this script can be re-run safely)
@@ -99,6 +115,13 @@ ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.business_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.security_audit_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access to reviews & admin write access
+DROP POLICY IF EXISTS "Allow read reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Allow manage reviews" ON public.reviews;
+CREATE POLICY "Allow read reviews" ON public.reviews FOR SELECT USING (true);
+CREATE POLICY "Allow manage reviews" ON public.reviews FOR ALL USING (true) WITH CHECK (true);
 
 -- 1. Categories
 DROP POLICY IF EXISTS "Public read active categories" ON public.categories;

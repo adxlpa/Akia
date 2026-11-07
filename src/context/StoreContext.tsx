@@ -10,6 +10,7 @@ import {
   AdminSession,
   SecurityAuditLog,
   AdminCredentials,
+  Review,
 } from '../types';
 import {
   INITIAL_CATEGORIES,
@@ -17,6 +18,7 @@ import {
   INITIAL_ORDERS,
   INITIAL_SETTINGS,
   INITIAL_ADMIN_CREDENTIALS,
+  INITIAL_REVIEWS,
 } from '../data/initialData';
 import {
   verifyPassword,
@@ -45,6 +47,8 @@ import {
   mapSettingsToSupabase,
   mapAuditLogFromSupabase,
   mapAuditLogToSupabase,
+  mapReviewFromSupabase,
+  mapReviewToSupabase,
 } from '../lib/supabase';
 import { updatePageSEO } from '../utils/seo';
 import { initGA, trackPageView } from '../utils/analytics';
@@ -105,6 +109,7 @@ interface StoreContextType {
   products: Product[];
   categories: Category[];
   orders: Order[];
+  reviews: Review[];
   settings: BusinessSettings;
   cart: CartItem[];
   cartOpen: boolean;
@@ -156,6 +161,9 @@ interface StoreContextType {
   addCategory: (categoryData: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateCategory: (categoryId: string, updates: Partial<Category>) => void;
   deleteCategory: (categoryId: string) => { success: boolean; error?: string };
+  addReview: (reviewData: Omit<Review, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  updateReview: (reviewId: string, updates: Partial<Review>) => void;
+  deleteReview: (reviewId: string) => void;
   updateSettings: (newSettings: Partial<BusinessSettings>) => void;
   resetToDefaults: () => void;
 
@@ -191,6 +199,7 @@ const STORAGE_KEYS = {
   PRODUCTS: 'akia_products_v2',
   CATEGORIES: 'akia_categories_v2',
   ORDERS: 'akia_orders_v2',
+  REVIEWS: 'akia_reviews_v2',
   SETTINGS: 'akia_settings_v2',
   CART: 'akia_cart_v2',
   ADMIN_CREDS: 'akia_admin_creds_v2',
@@ -228,6 +237,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
+    }
+  });
+
+  const [reviews, setReviews] = useState<Review[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.REVIEWS);
+      return saved ? JSON.parse(saved) : INITIAL_REVIEWS;
+    } catch {
+      return INITIAL_REVIEWS;
     }
   });
 
@@ -394,6 +412,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       console.error(e);
     }
   }, [orders]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.REVIEWS, JSON.stringify(reviews));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [reviews]);
 
   useEffect(() => {
     try {
@@ -629,6 +655,20 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setSettings(mapSettingsFromSupabase(settingsData));
       }
 
+      // 5. Fetch reviews
+      try {
+        const { data: revData, error: revError } = await client
+          .from('reviews')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!revError && revData && revData.length > 0) {
+          setReviews(revData.map(mapReviewFromSupabase));
+        }
+      } catch (revSyncErr) {
+        console.warn('Reviews table sync notice:', revSyncErr);
+      }
+
       setSupabaseStatus('connected');
       setSupabaseMessage('Connected & fully synchronized with Supabase.');
       return { success: true, message: 'Synchronized with Supabase successfully!' };
@@ -674,6 +714,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const supabaseSettings = mapSettingsToSupabase(settings);
       const { error: setErr } = await client.from('business_settings').upsert(supabaseSettings);
       if (setErr) throw new Error('Settings upsert failed');
+
+      // 4. Upsert Reviews (if any)
+      if (reviews.length > 0) {
+        try {
+          const supabaseReviews = reviews.map(mapReviewToSupabase);
+          await client.from('reviews').upsert(supabaseReviews);
+        } catch (revPushErr) {
+          console.warn('Reviews push notice:', revPushErr);
+        }
+      }
 
       setSupabaseStatus('connected');
       setSupabaseMessage('All 16 AKIA products, categories, and settings pushed to Supabase successfully!');
@@ -1242,6 +1292,49 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return { success: true };
   };
 
+  // Review CRUD
+  const addReview = (reviewData: Omit<Review, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const newReview: Review = {
+      ...reviewData,
+      id: `rev-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    setReviews((prev) => [newReview, ...prev]);
+
+    const client = getSupabaseClient();
+    if (client) {
+      client.from('reviews').insert(mapReviewToSupabase(newReview)).then();
+    }
+  };
+
+  const updateReview = (reviewId: string, updates: Partial<Review>) => {
+    let updatedReview: Review | undefined;
+    setReviews((prev) =>
+      prev.map((r) => {
+        if (r.id === reviewId) {
+          updatedReview = { ...r, ...updates, updatedAt: new Date().toISOString() };
+          return updatedReview;
+        }
+        return r;
+      })
+    );
+
+    const client = getSupabaseClient();
+    if (client && updatedReview) {
+      client.from('reviews').update(mapReviewToSupabase(updatedReview)).eq('id', reviewId).then();
+    }
+  };
+
+  const deleteReview = (reviewId: string) => {
+    setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+
+    const client = getSupabaseClient();
+    if (client) {
+      client.from('reviews').delete().eq('id', reviewId).then();
+    }
+  };
+
   const updateSettings = (newSettings: Partial<BusinessSettings>) => {
     const updated = { ...settings, ...newSettings };
     setSettings(updated);
@@ -1256,6 +1349,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setProducts(INITIAL_PRODUCTS);
     setCategories(INITIAL_CATEGORIES);
     setOrders(INITIAL_ORDERS);
+    setReviews(INITIAL_REVIEWS);
     setSettings(INITIAL_SETTINGS);
     setAdminCredentials(INITIAL_ADMIN_CREDENTIALS);
     setFailedAttempts(0);
@@ -1264,6 +1358,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.removeItem(STORAGE_KEYS.PRODUCTS);
     localStorage.removeItem(STORAGE_KEYS.CATEGORIES);
     localStorage.removeItem(STORAGE_KEYS.ORDERS);
+    localStorage.removeItem(STORAGE_KEYS.REVIEWS);
     localStorage.removeItem(STORAGE_KEYS.SETTINGS);
     localStorage.removeItem(STORAGE_KEYS.ADMIN_CREDS);
     localStorage.removeItem(STORAGE_KEYS.LOCKOUT);
@@ -1275,6 +1370,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         products,
         categories,
         orders,
+        reviews,
         settings,
         cart,
         cartOpen,
@@ -1310,6 +1406,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         addCategory,
         updateCategory,
         deleteCategory,
+        addReview,
+        updateReview,
+        deleteReview,
         updateSettings,
         resetToDefaults,
         isAdminAuthenticated,

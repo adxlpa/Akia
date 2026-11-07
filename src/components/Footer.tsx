@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 
 export const Footer: React.FC = () => {
-  const { setActiveView, setSelectedCategoryFilter, isAdminAuthenticated } = useStore();
+  const { setActiveView, setSelectedCategoryFilter, isAdminAuthenticated, reviews } = useStore();
   const [monographEmail, setMonographEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+
+  const avgRating = reviews.length > 0
+    ? `${(reviews.reduce((s, r) => s + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1)}★`
+    : '';
 
   const handleCategoryNav = (catId: string | null) => {
     setSelectedCategoryFilter(catId);
@@ -164,7 +168,7 @@ export const Footer: React.FC = () => {
                   }}
                   className="hover:text-black transition-colors text-left font-medium text-black"
                 >
-                  Customer Reviews (4.9★)
+                  Customer Reviews{avgRating ? ` (${avgRating})` : ''}
                 </button>
               </li>
             </ul>

@@ -19,6 +19,21 @@ export interface ProductVariant {
   weight: string;
 }
 
+export interface Review {
+  id: string;
+  author: string;
+  location: string;
+  rating: number;
+  date: string;
+  category: string;
+  productName: string;
+  headline: string;
+  content: string;
+  isVerified?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Product {
   id: string;
   name: string;

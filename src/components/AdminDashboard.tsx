@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
-import { Order, Product, Category, PaymentStatus, OrderStatus } from '../types';
+import { Order, Product, Category, PaymentStatus, OrderStatus, Review } from '../types';
 import { AdminImageUploader } from './AdminImageUploader';
 import { testSupabaseStorage } from '../lib/supabase';
 import { sanitizeUrl, sanitizeInput } from '../utils/security';
@@ -10,6 +10,7 @@ export const AdminDashboard: React.FC = () => {
     orders,
     products,
     categories,
+    reviews,
     settings,
     updateOrderPaymentStatus,
     updateOrderStatus,
@@ -19,6 +20,9 @@ export const AdminDashboard: React.FC = () => {
     addCategory,
     updateCategory,
     deleteCategory,
+    addReview,
+    updateReview,
+    deleteReview,
     updateSettings,
     resetToDefaults,
     setActiveView,
@@ -36,7 +40,7 @@ export const AdminDashboard: React.FC = () => {
     updateSupabaseCredentials,
   } = useStore();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'products' | 'categories' | 'settings' | 'security' | 'database'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'products' | 'categories' | 'reviews' | 'settings' | 'security' | 'database'>('overview');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [screenshotModalUrl, setScreenshotModalUrl] = useState<string | null>(null);
 
@@ -105,6 +109,130 @@ export const AdminDashboard: React.FC = () => {
   // Settings Form State
   const [settingsFormData, setSettingsFormData] = useState(settings);
   const [settingsSavedMsg, setSettingsSavedMsg] = useState(false);
+
+  // Reviews Management State
+  const [isAddingReview, setIsAddingReview] = useState(false);
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [reviewSearchQuery, setReviewSearchQuery] = useState('');
+  const [reviewRatingFilter, setReviewRatingFilter] = useState<number | 'all'>('all');
+  const [reviewActionError, setReviewActionError] = useState<string | null>(null);
+  const [reviewFormData, setReviewFormData] = useState({
+    author: '',
+    location: '',
+    rating: 5,
+    date: '',
+    category: 'soaps',
+    productName: '',
+    headline: '',
+    content: '',
+    isVerified: true,
+  });
+
+  const handleOpenAddReview = () => {
+    setEditingReview(null);
+    setReviewActionError(null);
+    const today = new Date().toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+    setReviewFormData({
+      author: '',
+      location: 'Kochi, Kerala',
+      rating: 5,
+      date: today,
+      category: categories[0]?.slug || 'soaps',
+      productName: products[0]?.name || 'Akia Thulasi Soap',
+      headline: '',
+      content: '',
+      isVerified: true,
+    });
+    setIsAddingReview(true);
+  };
+
+  const handleOpenEditReview = (rev: Review) => {
+    setEditingReview(rev);
+    setReviewActionError(null);
+    setReviewFormData({
+      author: rev.author,
+      location: rev.location || '',
+      rating: rev.rating || 5,
+      date: rev.date || '',
+      category: rev.category || 'soaps',
+      productName: rev.productName || '',
+      headline: rev.headline || '',
+      content: rev.content || '',
+      isVerified: rev.isVerified ?? true,
+    });
+    setIsAddingReview(true);
+  };
+
+  const handleSaveReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    setReviewActionError(null);
+
+    const author = sanitizeInput(reviewFormData.author.trim());
+    const headline = sanitizeInput(reviewFormData.headline.trim());
+    const content = sanitizeInput(reviewFormData.content.trim());
+    const productName = sanitizeInput(reviewFormData.productName.trim());
+    const location = sanitizeInput(reviewFormData.location.trim());
+    const date = sanitizeInput(reviewFormData.date.trim());
+
+    if (!author) {
+      setReviewActionError('Reviewer name is required.');
+      return;
+    }
+    if (!headline) {
+      setReviewActionError('Review headline is required.');
+      return;
+    }
+    if (!content) {
+      setReviewActionError('Review content is required.');
+      return;
+    }
+
+    const payload = {
+      author,
+      location: location || 'Kerala, India',
+      rating: Number(reviewFormData.rating) || 5,
+      date: date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+      category: reviewFormData.category || 'soaps',
+      productName: productName || 'Akia Botanical Care',
+      headline,
+      content,
+      isVerified: Boolean(reviewFormData.isVerified),
+    };
+
+    if (editingReview) {
+      updateReview(editingReview.id, payload);
+    } else {
+      addReview(payload);
+    }
+
+    setIsAddingReview(false);
+    setEditingReview(null);
+  };
+
+  const handleDeleteReview = (reviewId: string) => {
+    if (window.confirm('Are you sure you want to delete this customer review?')) {
+      deleteReview(reviewId);
+    }
+  };
+
+  const filteredReviews = reviews.filter((r) => {
+    if (reviewRatingFilter !== 'all' && r.rating !== reviewRatingFilter) {
+      return false;
+    }
+    if (reviewSearchQuery.trim()) {
+      const q = reviewSearchQuery.toLowerCase();
+      const matchAuthor = (r.author || '').toLowerCase().includes(q);
+      const matchProduct = (r.productName || '').toLowerCase().includes(q);
+      const matchHeadline = (r.headline || '').toLowerCase().includes(q);
+      const matchContent = (r.content || '').toLowerCase().includes(q);
+      return matchAuthor || matchProduct || matchHeadline || matchContent;
+    }
+    return true;
+  });
 
   // Orders Filter
   const [orderPaymentFilter, setOrderPaymentFilter] = useState<string>('all');
@@ -444,6 +572,7 @@ export const AdminDashboard: React.FC = () => {
             { id: 'orders', label: `Orders (${orders.length})`, icon: 'receipt_long' },
             { id: 'products', label: `Products (${products.length})`, icon: 'inventory_2' },
             { id: 'categories', label: `Categories (${categories.length})`, icon: 'category' },
+            { id: 'reviews', label: `Reviews (${reviews.length})`, icon: 'rate_review' },
             { id: 'settings', label: 'Business & UPI Settings', icon: 'settings' },
             { id: 'security', label: 'Security & Auth Gate', icon: 'shield' },
             { id: 'database', label: 'Supabase Cloud DB', icon: 'cloud_sync' },
@@ -470,7 +599,7 @@ export const AdminDashboard: React.FC = () => {
         {activeTab === 'overview' && (
           <div className="space-y-8">
             {/* KPI Stat Cards (Matching PDF Page 7 spec) */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 font-mono">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 font-mono">
               <div className="bg-white p-5 border border-[#E5E5E5]">
                 <span className="text-[11px] text-[#5e5e5e] uppercase block mb-1">Total Orders</span>
                 <span className="text-3xl font-semibold text-black">{totalOrders}</span>
@@ -498,6 +627,14 @@ export const AdminDashboard: React.FC = () => {
                 <span className="text-2xl font-semibold text-black">
                   ₹{totalRevenue.toLocaleString('en-IN')}
                 </span>
+              </div>
+              <div
+                className="bg-white p-5 border border-[#E5E5E5] cursor-pointer hover:border-black transition-colors"
+                onClick={() => setActiveTab('reviews')}
+                title="Manage customer reviews and feedback"
+              >
+                <span className="text-[11px] text-amber-800 uppercase block mb-1">Reviews</span>
+                <span className="text-3xl font-semibold text-black">{reviews.length}</span>
               </div>
             </div>
 
@@ -1382,6 +1519,429 @@ export const AdminDashboard: React.FC = () => {
                         className="h-10 px-6 bg-black text-white uppercase font-semibold"
                       >
                         {editingCategory ? 'Update Category' : 'Create Category'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 5: REVIEWS */}
+        {/* ========================================================================= */}
+        {activeTab === 'reviews' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 border border-[#E5E5E5]">
+              <div>
+                <h2 className="text-sm font-semibold uppercase font-mono text-black">
+                  Customer Reviews & Testimonials
+                </h2>
+                <p className="text-xs text-[#5e5e5e] font-mono">
+                  Curate verified buyer testimonials, star ratings, and real product experiences displayed on the storefront.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleOpenAddReview}
+                className="h-10 px-4 bg-black text-white text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-1.5 hover:bg-[#8B261D] transition-colors"
+              >
+                <span className="material-symbols-outlined text-[16px]">add</span>
+                <span>Add New Review</span>
+              </button>
+            </div>
+
+            {/* Quick Metrics & Search / Filter Bar */}
+            <div className="bg-white border border-[#E5E5E5] p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="text-xs font-mono bg-[#f5f4f2] border border-[#e5e5e5] px-3 py-1.5 rounded">
+                  <span className="text-[#5e5e5e] uppercase">Total:</span>{' '}
+                  <span className="font-bold text-black">{reviews.length}</span>
+                </div>
+                <div className="text-xs font-mono bg-[#f5f4f2] border border-[#e5e5e5] px-3 py-1.5 rounded">
+                  <span className="text-[#5e5e5e] uppercase">Average:</span>{' '}
+                  <span className="font-bold text-black">
+                    {reviews.length > 0
+                      ? `${(reviews.reduce((s, r) => s + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1)}★`
+                      : 'N/A'}
+                  </span>
+                </div>
+                <div className="text-xs font-mono bg-[#f5f4f2] border border-[#e5e5e5] px-3 py-1.5 rounded">
+                  <span className="text-[#5e5e5e] uppercase">5★ Rating:</span>{' '}
+                  <span className="font-bold text-emerald-700">
+                    {reviews.filter((r) => r.rating === 5).length}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Search */}
+                <div className="relative flex-grow sm:flex-grow-0 sm:w-64">
+                  <span className="material-symbols-outlined absolute left-2.5 top-2.5 text-[18px] text-[#747878]">
+                    search
+                  </span>
+                  <input
+                    type="text"
+                    value={reviewSearchQuery}
+                    onChange={(e) => setReviewSearchQuery(e.target.value)}
+                    placeholder="Search author, product, headline..."
+                    className="w-full h-9 pl-9 pr-3 bg-[#f9f9f9] border border-[#E5E5E5] text-xs font-mono focus:outline-none focus:border-black"
+                  />
+                  {reviewSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setReviewSearchQuery('')}
+                      className="absolute right-2 top-2 text-[#747878] hover:text-black"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Rating filter */}
+                <select
+                  value={reviewRatingFilter}
+                  onChange={(e) =>
+                    setReviewRatingFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
+                  }
+                  className="h-9 px-3 bg-[#f9f9f9] border border-[#E5E5E5] text-xs font-mono focus:outline-none focus:border-black uppercase"
+                >
+                  <option value="all">All Ratings</option>
+                  <option value="5">5 Stars (★★★★★)</option>
+                  <option value="4">4 Stars (★★★★☆)</option>
+                  <option value="3">3 Stars (★★★☆☆)</option>
+                  <option value="2">2 Stars (★★☆☆☆)</option>
+                  <option value="1">1 Star (★☆☆☆☆)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Reviews List */}
+            {filteredReviews.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredReviews.map((rev) => (
+                  <div
+                    key={rev.id}
+                    className="bg-white border border-[#E5E5E5] p-5 flex flex-col justify-between hover:border-black transition-colors shadow-xs"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1 text-amber-500">
+                          {[...Array(rev.rating || 5)].map((_, i) => (
+                            <span key={i} className="material-symbols-outlined text-[16px]">
+                              star
+                            </span>
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-mono text-[#747878] uppercase">
+                          {rev.date || 'Recent'}
+                        </span>
+                      </div>
+
+                      <h4 className="text-sm font-serif font-bold text-black leading-snug">
+                        “{rev.headline}”
+                      </h4>
+
+                      <p className="text-xs text-[#5e5e5e] line-clamp-3 leading-relaxed whitespace-pre-line">
+                        {rev.content}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 mt-4 border-t border-[#E5E5E5] space-y-2">
+                      <div className="flex items-center justify-between text-[11px] font-mono">
+                        <span className="font-bold text-black truncate max-w-[150px]">{rev.author}</span>
+                        {rev.isVerified !== false && (
+                          <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px]">
+                            <span className="material-symbols-outlined text-[12px]">verified</span>
+                            Verified
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between text-[10px] text-[#747878] font-mono">
+                        <span>{rev.location || 'Kerala'}</span>
+                        <span className="text-[#8B261D] font-medium truncate max-w-[140px]" title={rev.productName}>
+                          {rev.productName}
+                        </span>
+                      </div>
+
+                      <div className="pt-2 flex items-center justify-end gap-2 border-t border-[#f0f0f0]">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditReview(rev)}
+                          className="h-8 px-3 border border-[#E5E5E5] hover:border-black text-[11px] font-mono uppercase text-black inline-flex items-center gap-1 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">edit</span>
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteReview(rev.id)}
+                          className="h-8 px-3 border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-mono uppercase inline-flex items-center gap-1 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">delete</span>
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white border border-[#E5E5E5] p-12 text-center space-y-4">
+                <span className="material-symbols-outlined text-4xl text-[#747878]">rate_review</span>
+                <h3 className="text-base font-serif font-bold text-black">
+                  {reviews.length === 0 ? 'No Customer Reviews Published' : 'No Reviews Matching Search'}
+                </h3>
+                <p className="text-xs text-[#5e5e5e] font-mono max-w-md mx-auto">
+                  {reviews.length === 0
+                    ? 'All previous reviews have been removed. Add verified customer testimonials to display them across the storefront and dedicated reviews view.'
+                    : 'Try clearing your search query or rating filter to view existing reviews.'}
+                </p>
+                {reviews.length === 0 ? (
+                  <button
+                    type="button"
+                    onClick={handleOpenAddReview}
+                    className="h-10 px-5 bg-black text-white text-xs uppercase tracking-widest font-mono font-semibold inline-flex items-center gap-1.5 hover:bg-[#8B261D] transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">add</span>
+                    <span>Add First Review</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setReviewSearchQuery('');
+                      setReviewRatingFilter('all');
+                    }}
+                    className="h-10 px-4 border border-black text-black text-xs uppercase font-mono hover:bg-black hover:text-white transition-colors"
+                  >
+                    Clear Filters
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Add / Edit Review Modal */}
+            {isAddingReview && (
+              <div
+                className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
+                onClick={() => setIsAddingReview(false)}
+              >
+                <div
+                  className="bg-white max-w-xl w-full border border-[#E5E5E5] max-h-[92vh] overflow-y-auto p-6 shadow-2xl relative"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between pb-3 border-b border-[#E5E5E5] mb-4">
+                    <h3 className="text-base font-semibold text-black font-mono uppercase">
+                      {editingReview ? 'Edit Customer Review' : 'Add New Customer Review'}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setIsAddingReview(false)}
+                      className="text-[#747878] hover:text-black"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                  </div>
+
+                  {reviewActionError && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-3 font-mono mb-4">
+                      {reviewActionError}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSaveReview} className="space-y-4 text-xs font-mono">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block uppercase text-black font-medium mb-1">
+                          Reviewer / Customer Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={reviewFormData.author}
+                          onChange={(e) =>
+                            setReviewFormData({ ...reviewFormData, author: e.target.value })
+                          }
+                          placeholder="e.g. Anjali Menon"
+                          className="w-full h-10 px-3 bg-[#f9f9f9] border border-[#E5E5E5] focus:outline-none focus:border-black"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block uppercase text-black font-medium mb-1">
+                          Location
+                        </label>
+                        <input
+                          type="text"
+                          value={reviewFormData.location}
+                          onChange={(e) =>
+                            setReviewFormData({ ...reviewFormData, location: e.target.value })
+                          }
+                          placeholder="e.g. Kochi, Kerala"
+                          className="w-full h-10 px-3 bg-[#f9f9f9] border border-[#E5E5E5] focus:outline-none focus:border-black"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block uppercase text-black font-medium mb-1">
+                          Star Rating (1 - 5) *
+                        </label>
+                        <div className="flex items-center gap-2 h-10 px-3 bg-[#f9f9f9] border border-[#E5E5E5]">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setReviewFormData({ ...reviewFormData, rating: star })}
+                              className="focus:outline-none"
+                              title={`${star} star`}
+                            >
+                              <span
+                                className={`material-symbols-outlined text-[22px] transition-colors ${
+                                  star <= reviewFormData.rating ? 'text-amber-500' : 'text-neutral-300'
+                                }`}
+                              >
+                                star
+                              </span>
+                            </button>
+                          ))}
+                          <span className="ml-auto font-bold text-black">{reviewFormData.rating} / 5</span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block uppercase text-black font-medium mb-1">
+                          Review Date
+                        </label>
+                        <input
+                          type="text"
+                          value={reviewFormData.date}
+                          onChange={(e) =>
+                            setReviewFormData({ ...reviewFormData, date: e.target.value })
+                          }
+                          placeholder="e.g. October 12, 2026"
+                          className="w-full h-10 px-3 bg-[#f9f9f9] border border-[#E5E5E5] focus:outline-none focus:border-black"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block uppercase text-black font-medium mb-1">
+                          Associated Product *
+                        </label>
+                        <select
+                          value={reviewFormData.productName}
+                          onChange={(e) => {
+                            const pName = e.target.value;
+                            const matchedProd = products.find((p) => p.name === pName);
+                            setReviewFormData({
+                              ...reviewFormData,
+                              productName: pName,
+                              category: matchedProd?.categoryId || reviewFormData.category,
+                            });
+                          }}
+                          className="w-full h-10 px-3 bg-[#f9f9f9] border border-[#E5E5E5] focus:outline-none focus:border-black"
+                        >
+                          {products.map((p) => (
+                            <option key={p.id} value={p.name}>
+                              {p.name}
+                            </option>
+                          ))}
+                          <option value="Akia Herbal Care">Other / General Brand</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block uppercase text-black font-medium mb-1">
+                          Category Group
+                        </label>
+                        <select
+                          value={reviewFormData.category}
+                          onChange={(e) =>
+                            setReviewFormData({ ...reviewFormData, category: e.target.value })
+                          }
+                          className="w-full h-10 px-3 bg-[#f9f9f9] border border-[#E5E5E5] focus:outline-none focus:border-black uppercase"
+                        >
+                          <option value="soaps">Handmade Soaps</option>
+                          <option value="hair">Hair Care</option>
+                          <option value="facewash">Face Wash</option>
+                          <option value="gels">Gels & Creams</option>
+                          {categories.map((c) => (
+                            <option key={c.id} value={c.slug || c.id}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block uppercase text-black font-medium mb-1">
+                        Review Headline / Title *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={reviewFormData.headline}
+                        onChange={(e) =>
+                          setReviewFormData({ ...reviewFormData, headline: e.target.value })
+                        }
+                        placeholder="e.g. Cleared hormonal acne without drying my skin!"
+                        className="w-full h-10 px-3 bg-[#f9f9f9] border border-[#E5E5E5] focus:outline-none focus:border-black"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block uppercase text-black font-medium mb-1">
+                        Review Experience / Testimonial Content *
+                      </label>
+                      <textarea
+                        rows={4}
+                        required
+                        value={reviewFormData.content}
+                        onChange={(e) =>
+                          setReviewFormData({ ...reviewFormData, content: e.target.value })
+                        }
+                        placeholder="Detailed customer experience and results..."
+                        className="w-full p-3 bg-[#f9f9f9] border border-[#E5E5E5] focus:outline-none focus:border-black resize-y"
+                      />
+                    </div>
+
+                    <div className="pt-2">
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={reviewFormData.isVerified}
+                          onChange={(e) =>
+                            setReviewFormData({ ...reviewFormData, isVerified: e.target.checked })
+                          }
+                          className="w-4 h-4 accent-black"
+                        />
+                        <span className="uppercase text-black font-medium">
+                          Mark as Verified Customer Purchase
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-4 border-t border-[#E5E5E5]">
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingReview(false)}
+                        className="h-10 px-4 border border-[#E5E5E5] text-black hover:border-black uppercase"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="h-10 px-6 bg-black text-white uppercase font-semibold hover:bg-[#8B261D] transition-colors"
+                      >
+                        {editingReview ? 'Update Review' : 'Publish Review'}
                       </button>
                     </div>
                   </form>

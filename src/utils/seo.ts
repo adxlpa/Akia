@@ -61,9 +61,9 @@ export const METADATA_CONFIG: Record<string, PageMetadata> = {
     ],
   },
   reviews: {
-    title: 'Customer Reviews & Real Experiences | AKIA Hand Made Soaps (4.9★)',
+    title: 'Customer Reviews & Real Experiences | AKIA Hand Made Botanicals',
     description:
-      'Read 1,200+ verified customer reviews of AKIA handmade soaps, Brahmi hair oil, and herbal skincare formulations. Rated 4.9/5 by patrons across India.',
+      'Read verified customer reviews of AKIA handmade soaps, Brahmi hair oil, and herbal skincare formulations crafted in Kerala.',
     canonical: `${BASE_URL}/reviews`,
     ogType: 'website',
     ogImage: `${BASE_URL}/images/products/thulasi-soap.jpg`,
