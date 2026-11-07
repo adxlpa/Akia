@@ -86,9 +86,6 @@ export const ReviewsView: React.FC = () => {
                       </span>
                     ))}
                   </div>
-                  <p className="text-xs text-[#5e5e5e] font-mono">
-                    Previous mock reviews cleared. Ready for authentic customer experiences.
-                  </p>
                 </>
               )}
             </div>
@@ -110,18 +107,6 @@ export const ReviewsView: React.FC = () => {
                   <span className="material-symbols-outlined text-[16px]">rate_review</span>
                   <span>Share Your Experience With Us on WhatsApp</span>
                 </a>
-                {isAdminAuthenticated && (
-                  <button
-                    onClick={() => {
-                      setActiveView('admin');
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold uppercase text-black hover:underline"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-                    <span>Admin Panel</span>
-                  </button>
-                )}
               </div>
             </div>
           </div>
@@ -224,19 +209,6 @@ export const ReviewsView: React.FC = () => {
                 <span className="material-symbols-outlined text-[16px]">chat</span>
                 <span>Share Experience on WhatsApp</span>
               </a>
-              {isAdminAuthenticated && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveView('admin');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="h-10 px-5 bg-white border border-black hover:bg-black hover:text-white text-black text-xs uppercase tracking-widest font-mono font-medium transition-colors inline-flex items-center gap-2"
-                >
-                  <span className="material-symbols-outlined text-[16px]">add_circle</span>
-                  <span>Add Reviews in Admin Panel</span>
-                </button>
-              )}
             </div>
           </div>
         )}
